@@ -6,6 +6,34 @@ C++ toolchain for Windows and Linux.
 <details>
 <summary><b>Requirements</b></summary>
 
+Install [Git](https://git-scm.com/downloads).
+
+```
+Select Components
+☐ Windows Explorer integration
+☐ Associate .git* configuration files with the default text editor
+☐ Associate .sh files to be run with Bash
+
+Choosing the default editor used by Git
+Use Visual Studio Code as Git's default editor
+
+Adjusting the name of the initial branch in new repositories
+◉ Override the default branch name for new repositories
+Specify the name "git init" should use for the initial branch: master
+
+Configuring the line ending conversions
+◉ Checkout as-is, commit as-is
+
+Configuring the terminal emulator to use Git Bash
+◉ Use Windows' default console window
+
+Choose the default behavior of `git pull`
+◉ Rebase
+
+Choose a credential helper
+◉ None
+```
+
 Install [LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/LLVM-11.0.0-win64.exe).
 
 ```
@@ -43,7 +71,6 @@ Add the following directories to the `Path` system environment variable.
 ```
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Msbuild\Microsoft\VisualStudio\NodeJs
 ```
 
@@ -54,11 +81,11 @@ Set the `VSCMD_SKIP_SENDTELEMETRY` system environment variable to `1`.
 Install toolchain.
 
 ```cmd
-make PREFIX=C:\Workspace\ace
-make install
+git clone -b develop https://github.com/qis/ace C:/Ace
+cd C:\Ace && make
 ```
 
-Add `C:\Workspace\ace\bin` to the system `Path` environment variable.
+Add `C:\Ace\bin` to the system `Path` environment variable.
 
 ## Ubuntu
 
@@ -129,8 +156,10 @@ sudo update-alternatives --install /usr/bin/c++ c++ /opt/llvm/bin/clang++ 100
 Install toolchain.
 
 ```cmd
-make PREFIX=/opt/ace
-sudo make install
+sudo mkdir /opt/ace
+sudo chown `id -u`:`id -g` /opt/ace
+git clone -b develop https://github.com/qis/ace /opt/ace
+cd /opt/ace && make
 ```
 
 ## Ports
