@@ -69,15 +69,18 @@ if(WIN32)
   unset(MSVC_DEFINES)
   unset(MSVC_FLAGS)
 else()
-  # LLVM Root
-  set(LLVM_ROOT "/opt/llvm")
+  # LLVM
+  find_program(LLVM_BIN clang PATHS /opt/llvm/bin REQUIRED)
+  get_filename_component(LLVM_BIN ${LLVM_BIN} DIRECTORY)
+  get_filename_component(LLVM_LIB ${LLVM_BIN} DIRECTORY)
+  set(LLVM_LIB ${LLVM_LIB}/lib)
 
   # Toolset
-  set(CMAKE_C_COMPILER "${LLVM_ROOT}/bin/clang" CACHE STRING "")
-  set(CMAKE_CXX_COMPILER "${LLVM_ROOT}/bin/clang++" CACHE STRING "")
-  set(CMAKE_RANLIB "${LLVM_ROOT}/bin/llvm-ranlib" CACHE STRING "")
-  set(CMAKE_AR "${LLVM_ROOT}/bin/llvm-ar" CACHE STRING "")
-  set(CMAKE_NM "${LLVM_ROOT}/bin/llvm-nm" CACHE STRING "")
+  set(CMAKE_C_COMPILER "${LLVM_BIN}/bin/clang" CACHE STRING "")
+  set(CMAKE_CXX_COMPILER "${LLVM_BIN}/bin/clang++" CACHE STRING "")
+  set(CMAKE_RANLIB "${LLVM_BIN}/bin/llvm-ranlib" CACHE STRING "")
+  set(CMAKE_AR "${LLVM_BIN}/bin/llvm-ar" CACHE STRING "")
+  set(CMAKE_NM "${LLVM_BIN}/bin/llvm-nm" CACHE STRING "")
 
   # LLVM Defines
   set(LLVM_DEFINES "-D_DEFAULT_SOURCE=1")
@@ -111,7 +114,7 @@ else()
     set(CMAKE_${LINKER}_FLAGS "-L${CMAKE_CURRENT_LIST_DIR}/lib -fuse-ld=lld -pthread -Wl,--as-needed" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_ACE "" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_DEBUG "" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -static-libstdc++ ${LLVM_ROOT}/lib/libc++abi.a -flto=full" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -static-libstdc++ ${LLVM_LIB}/lib/libc++abi.a -flto=full" CACHE STRING "")
   endforeach()
 
   # Position Independent Code
@@ -121,14 +124,15 @@ else()
 
   # Runtime Path
   if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_BUILD_RPATH "${LLVM_ROOT}/lib;${CMAKE_CURRENT_LIST_DIR}/lib" CACHE STRING "")
+    set(CMAKE_BUILD_RPATH "${LLVM_LIB}/lib;${CMAKE_CURRENT_LIST_DIR}/lib" CACHE STRING "")
   endif()
 
   # Cleanup
   unset(LLVM_STATIC)
   unset(LLVM_DEFINES)
   unset(LLVM_FLAGS)
-  unset(LLVM_ROOT)
+  unset(LLVM_LIB)
+  unset(LLVM_BIN)
 endif()
 
 # Include Directories
