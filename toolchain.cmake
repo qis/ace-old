@@ -72,6 +72,7 @@ else()
   # LLVM
   find_program(LLVM_BIN clang PATHS /opt/llvm/bin REQUIRED)
   get_filename_component(LLVM_BIN ${LLVM_BIN} DIRECTORY)
+  get_filename_component(LLVM_BIN ${LLVM_BIN} DIRECTORY)
   get_filename_component(LLVM_LIB ${LLVM_BIN} DIRECTORY)
   set(LLVM_LIB ${LLVM_LIB}/lib)
 
