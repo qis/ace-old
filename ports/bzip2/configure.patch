@@ -1,0 +1,45 @@
+--- i/bzlib.h
++++ w/bzlib.h
+@@ -22,6 +22,26 @@
+ #ifndef _BZLIB_H
+ #define _BZLIB_H
+ 
++// ports config begin
++#ifndef NDEBUG
++#  ifdef _WIN32
++#    ifdef BZ_BUILD
++#      define BZ_EXTERN __declspec(dllexport)
++#    else
++#      define BZ_EXTERN __declspec(dllimport)
++#    endif
++#  else
++#    ifdef BZ_BUILD
++#      define BZ_EXTERN __attribute__((visibility("default")))
++#    else
++#      define BZ_EXTERN
++#    endif
++#  endif
++#else
++#  define BZ_EXTERN
++#endif
++// ports config end
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -83,15 +103,12 @@ typedef
+ #   endif
+ #   ifdef BZ_EXPORT
+ #   define BZ_API(func) WINAPI func
+-#   define BZ_EXTERN extern
+ #   else
+    /* import windows dll dynamically */
+ #   define BZ_API(func) (WINAPI * func)
+-#   define BZ_EXTERN
+ #   endif
+ #else
+ #   define BZ_API(func) func
+-#   define BZ_EXTERN extern
+ #endif
+ 
+ 

@@ -1,0 +1,61 @@
+--- i/include/tbb/internal/_warning_suppress_disable_notice.h
++++ w/include/tbb/internal/_warning_suppress_disable_notice.h
+@@ -14,14 +14,10 @@
+     limitations under the License.
+ */
+ 
+-#if __TBB_SUPPRESS_INTERNAL_DEPRECATED_MESSAGES
+-
+-#if __INTEL_COMPILER || _MSC_VER
++#if defined(__clang__)
++#pragma clang diagnostic pop
++#elif defined(_MSC_VER) || defined(__INTEL_COMPILER)
+ #pragma warning( pop )
+-#elif __GNUC__
++#elif defined(__GNUC__)
+ #pragma GCC diagnostic pop
+-#elif __clang__
+-#pragma clang diagnostic pop
+ #endif
+-
+-#endif  // __TBB_SUPPRESS_INTERNAL_DEPRECATED_MESSAGES
+--- i/include/tbb/internal/_warning_suppress_enable_notice.h
++++ w/include/tbb/internal/_warning_suppress_enable_notice.h
+@@ -14,19 +14,14 @@
+     limitations under the License.
+ */
+ 
+-#include "../tbb_config.h"
+-
+-#if __TBB_SUPPRESS_INTERNAL_DEPRECATED_MESSAGES
+-
+-#if _MSC_VER || __INTEL_COMPILER
++#if defined(__clang__)
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Wdeprecated-declarations"
++#pragma clang diagnostic ignored "-Wdeprecated-volatile"
++#elif defined(_MSC_VER) || defined(__INTEL_COMPILER)
+ #pragma warning( push )
+-#pragma warning( disable: 4996 )
+-#elif __GNUC__
++#pragma warning( disable: 4146 4244 4267 4996 )
++#elif defined(__GNUC__)
+ #pragma GCC diagnostic push
+ #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+-#elif __clang__
+-#pragma clang diagnostic push
+-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+ #endif
+-
+-#endif  // __TBB_SUPPRESS_INTERNAL_DEPRECATED_MESSAGES
+--- i/src/tbb/cilk-tbb-interop.h
++++ w/src/tbb/cilk-tbb-interop.h
+@@ -29,6 +29,8 @@
+ #else
+ #ifdef IN_CILK_RUNTIME
+ #define CILK_EXPORT __declspec(dllexport)
++#elif defined(IN_CILK_STATIC)
++#define CILK_EXPORT /* nothing */
+ #else
+ #define CILK_EXPORT __declspec(dllimport)
+ #endif  // IN_CILK_RUNTIME

@@ -1,0 +1,15 @@
+--- i/lib/zstd.h
++++ w/lib/zstd.h
+@@ -14,6 +14,12 @@ extern "C" {
+ #ifndef ZSTD_H_235446
+ #define ZSTD_H_235446
+ 
++// ports config begin
++#if !defined(NDEBUG) && defined(_WIN32)
++#  define ZSTD_DLL_IMPORT 1
++#endif
++// ports config end
++
+ /* ======   Dependency   ======*/
+ #include <limits.h>   /* INT_MAX */
+ #include <stddef.h>   /* size_t */

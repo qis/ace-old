@@ -1,2 +1,152 @@
 # Ace
 C++ toolchain for Windows and Linux.
+
+## Windows
+
+<details>
+<summary><b>Requirements</b></summary>
+
+Install [LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/LLVM-11.0.0-win64.exe).
+
+```
+Install Options
+◉ Add LLVM to the system PATN for all users
+```
+  
+Install [Visual Studio Preview](https://visualstudio.microsoft.com/vs/preview/).
+
+```
+Workloads
+☑ Desktop development with C++
+☑ Linux development with C++
+☑ Node.js development
+
+Installation Details
++ Desktop development with C++
+  ☐ Test Adapter for Boost.Test
+  ☐ Test Adapter for Google Test
+  ☐ Live Share
++ Node.js development
+  ☐ Web Deploy
+```
+
+Install Visual Studio extensions.
+
+- [Hide Suggestion And Outlining Margins][hi]
+- [Trailing Whitespace Visualizer][ws]
+
+[hi]: https://marketplace.visualstudio.com/items?itemName=MussiKara.HideSuggestionAndOutliningMargins
+[ws]: https://marketplace.visualstudio.com/items?itemName=MadsKristensen.TrailingWhitespaceVisualizer
+
+Add the following directories to the `Path` system environment variable.
+
+```
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer\Git\cmd
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Msbuild\Microsoft\VisualStudio\NodeJs
+```
+
+Set the `VSCMD_SKIP_SENDTELEMETRY` system environment variable to `1`.
+
+</details>
+
+Install toolchain.
+
+```cmd
+make PREFIX=C:\Workspace\ace
+make install
+```
+
+Add `C:\Workspace\ace\bin` to the system `Path` environment variable.
+
+## Ubuntu
+
+<details>
+<summary><b>Requirements</b></summary>
+
+Install basic development packages.
+
+```sh
+sudo apt install -y binutils-dev debconf-utils libc6-dev libgcc-9-dev manpages-dev
+sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
+  autoconf automake bison flex gdb make nasm ninja-build pkgconf sqlite3
+```
+
+Install [CMake](https://cmake.org/).
+
+```sh
+sudo rm -rf /opt/cmake; sudo mkdir -p /opt/cmake
+wget https://github.com/Kitware/CMake/releases/download/v3.18.4/cmake-3.18.4-Linux-x86_64.tar.gz
+sudo tar xf cmake-3.18.4-Linux-x86_64.tar.gz -C /opt/cmake --strip-components=1
+rm -f cmake-3.18.4-Linux-x86_64.tar.gz
+sudo tee /etc/profile.d/cmake.sh >/dev/null <<'EOF'
+export PATH="/opt/cmake/bin:${PATH}"
+EOF
+sudo chmod 0755 /etc/profile.d/cmake.sh
+. /etc/profile.d/cmake.sh
+```
+
+Install [Node](https://nodejs.org/).
+
+```sh
+sudo rm -rf /opt/node; sudo mkdir -p /opt/node
+wget https://nodejs.org/dist/v12.16.3/node-v12.16.3-linux-x64.tar.xz
+sudo tar xf node-v12.16.3-linux-x64.tar.xz -C /opt/node --strip-components=1
+rm -f node-v12.16.3-linux-x64.tar.xz
+sudo tee /etc/profile.d/node.sh >/dev/null <<'EOF'
+export PATH="/opt/node/bin:${PATH}"
+EOF
+sudo chmod 0755 /etc/profile.d/node.sh
+. /etc/profile.d/node.sh
+```
+
+Install [LLVM](https://llvm.org/).
+
+```sh
+sudo rm -rf /opt/llvm; sudo mkdir -p /opt/llvm
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
+sudo tar xf clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz -C /opt/llvm --strip-components=1
+rm -f clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
+sudo tee /etc/profile.d/llvm.sh >/dev/null <<'EOF'
+export PATH="/opt/llvm/bin:${PATH}"
+EOF
+sudo chmod 0755 /etc/profile.d/llvm.sh
+. /etc/profile.d/llvm.sh
+```
+
+Set default system compiler.
+
+```sh
+sudo update-alternatives --remove-all cc
+sudo update-alternatives --remove-all c++
+sudo update-alternatives --install /usr/bin/cc  cc  /opt/llvm/bin/clang   100
+sudo update-alternatives --install /usr/bin/c++ c++ /opt/llvm/bin/clang++ 100
+```
+
+</details>
+
+Install toolchain.
+
+```cmd
+make PREFIX=/opt/ace
+sudo make install
+```
+
+## Ports
+This toolchain includes the following third party libraries.
+
+### Utility
+- [benchmark](https://github.com/google/benchmark/releases) 1.5.2
+- [doctest](https://github.com/onqtam/doctest/releases) 2.4.0
+- [date](https://github.com/HowardHinnant/date) 3.0.0
+- [fmt](https://github.com/fmtlib/fmt/releases) 7.1.0
+- [pugixml](https://github.com/zeux/pugixml/releases) 1.10
+- [tbb](https://github.com/oneapi-src/oneTBB/releases) 2020.3
+
+### Compression
+- [brotli](https://github.com/google/brotli/releases) 1.0.9
+- [bzip2](https://sourceware.org/pub/bzip2/) 1.0.8
+- [lzma](https://tukaani.org/xz/) 5.2.5
+- [zlib](https://www.zlib.net/) 1.2.11
+- [zstd](https://github.com/facebook/zstd/releases) 1.4.5

@@ -1,0 +1,464 @@
+--- i/include/date/date.h
++++ w/include/date/date.h
+@@ -4710,7 +4710,7 @@ scan_keyword(std::basic_istream<CharT, Traits>& is, FwdIter kb, FwdIter ke)
+     {
+         status = (unsigned char*)std::malloc(nkw);
+         if (status == nullptr)
+-            throw std::bad_alloc();
++            std::terminate();
+         stat_hold.reset(status);
+     }
+     size_t n_might_match = nkw;  // At this point, any keyword might match
+--- i/include/date/tz.h
++++ w/include/date/tz.h
+@@ -129,6 +129,7 @@ static_assert(HAS_REMOTE_API == 0 ? AUTO_DOWNLOAD == 0 : true,
+ #include <algorithm>
+ #include <atomic>
+ #include <cassert>
++#include <cerrno>
+ #include <chrono>
+ #include <istream>
+ #include <locale>
+@@ -971,9 +972,15 @@ time_zone::to_sys_impl(local_time<Duration> tp, choose, std::true_type) const
+ {
+     auto i = get_info(tp);
+     if (i.result == local_info::nonexistent)
+-        throw nonexistent_local_time(tp, i);
++    {
++        errno = static_cast<int>(local_info::nonexistent);
++        return i.first.end;
++    }
+     else if (i.result == local_info::ambiguous)
+-        throw ambiguous_local_time(tp, i);
++    {
++        errno = static_cast<int>(local_info::ambiguous);
++        return sys_time<Duration>{tp.time_since_epoch()} - i.second.offset;
++    }
+     return sys_time<Duration>{tp.time_since_epoch()} - i.first.offset;
+ }
+ 
+--- i/src/tz.cpp
++++ w/src/tz.cpp
+@@ -180,6 +180,16 @@ static CONSTDATA char folder_delimiter = '/';
+ #  pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+ #endif  // defined(__GNUC__) && __GNUC__ < 5
+ 
++
++namespace
++{
++    [[noreturn]] void throw_exception(const std::exception& e) noexcept
++    {
++        std::puts(e.what());
++        std::terminate();
++    }
++}
++
+ #if !USE_OS_TZDB
+ 
+ #  ifdef _WIN32
+@@ -250,7 +260,7 @@ expand_path(std::string path)
+     std::unique_ptr<::wordexp_t, void(*)(::wordexp_t*)> hold{&w, ::wordfree};
+     ::wordexp(path.c_str(), &w, 0);
+     if (w.we_wordc != 1)
+-        throw std::runtime_error("Cannot expand path: " + path);
++        throw_exception(std::runtime_error("Cannot expand path: " + path));
+     path = w.we_wordv[0];
+     return path;
+ #      endif  // !TARGET_OS_IPHONE
+@@ -359,7 +369,7 @@ discover_tz_dir()
+     else if(stat(tz_dir_default, &sb) == 0 && S_ISDIR(sb.st_mode))
+         return tz_dir_default;
+     else
+-        throw runtime_error("discover_tz_dir failed to find zoneinfo\n");
++        throw_exception(runtime_error("discover_tz_dir failed to find zoneinfo\n"));
+ #  else  // __APPLE__
+ #      if TARGET_OS_IPHONE
+ #          if TARGET_OS_SIMULATOR
+@@ -370,19 +380,19 @@ discover_tz_dir()
+ #      else
+     CONSTDATA auto timezone = "/etc/localtime";
+     if (!(lstat(timezone, &sb) == 0 && S_ISLNK(sb.st_mode) && sb.st_size > 0))
+-        throw runtime_error("discover_tz_dir failed\n");
++        throw_exception(runtime_error("discover_tz_dir failed\n"));
+     string result;
+     char rp[PATH_MAX+1] = {};
+     if (readlink(timezone, rp, sizeof(rp)-1) > 0)
+         result = string(rp);
+     else
+-        throw system_error(errno, system_category(), "readlink() failed");
++        throw_exception(system_error(errno, system_category(), "readlink() failed"));
+     auto i = result.find("zoneinfo");
+     if (i == string::npos)
+-        throw runtime_error("discover_tz_dir failed to find zoneinfo\n");
++        throw_exception(runtime_error("discover_tz_dir failed to find zoneinfo\n"));
+     i = result.find('/', i);
+     if (i == string::npos)
+-        throw runtime_error("discover_tz_dir failed to find '/'\n");
++        throw_exception(runtime_error("discover_tz_dir failed to find '/'\n"));
+     return result.substr(0, i);
+ #      endif
+ #  endif  // __APPLE__
+@@ -540,7 +550,7 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
+         std::string msg = "Error opening time zone mapping file \"";
+         msg += input_path;
+         msg += "\".";
+-        throw std::runtime_error(msg);
++        throw_exception(std::runtime_error(msg));
+     }
+ 
+     auto error = [&input_path, &line_num](const char* info)
+@@ -551,7 +561,7 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
+         msg += std::to_string(line_num);
+         msg += ": ";
+         msg += info;
+-        throw std::runtime_error(msg);
++        throw_exception(std::runtime_error(msg));
+     };
+     // [optional space]a="b"
+     auto read_attribute = [&line, &error]
+@@ -700,7 +710,7 @@ parse_dow(std::istream& in)
+     auto s = parse3(in);
+     auto dow = std::find(std::begin(dow_names), std::end(dow_names), s) - dow_names;
+     if (dow >= std::end(dow_names) - std::begin(dow_names))
+-        throw std::runtime_error("oops: bad dow name: " + s);
++        throw_exception(std::runtime_error("oops: bad dow name: " + s));
+     return static_cast<unsigned>(dow);
+ }
+ 
+@@ -714,7 +724,7 @@ parse_month(std::istream& in)
+     auto s = parse3(in);
+     auto m = std::find(std::begin(month_names), std::end(month_names), s) - month_names;
+     if (m >= std::end(month_names) - std::begin(month_names))
+-        throw std::runtime_error("oops: bad month name: " + s);
++        throw_exception(std::runtime_error("oops: bad month name: " + s));
+     return static_cast<unsigned>(++m);
+ }
+ 
+@@ -991,25 +1001,25 @@ detail::operator>>(std::istream& is, MonthDayTime& x)
+                     char c2{};
+                     is >> c2;
+                     if (c2 != '=')
+-                        throw std::runtime_error(std::string("bad operator: ") + c + c2);
++                        throw_exception(std::runtime_error(std::string("bad operator: ") + c + c2));
+                     int d;
+                     is >> d;
+                     if (d < 1 || d > 31)
+-                        throw std::runtime_error(std::string("bad operator: ") + c + c2
+-                                 + std::to_string(d));
++                        throw_exception(std::runtime_error(std::string("bad operator: ") + c + c2
++                                 + std::to_string(d)));
+                     x.type_ = c == '<' ? MonthDayTime::lteq : MonthDayTime::gteq;
+                     x.u = MonthDayTime::pair{ date::month(m) / d, date::weekday(dow) };
+                 }
+                 else
+-                    throw std::runtime_error(std::string("bad operator: ") + c);
++                    throw_exception(std::runtime_error(std::string("bad operator: ") + c));
+             }
+             else  // if (std::isdigit(is.peek())
+             {
+                 int d;
+                 is >> d;
+                 if (d < 1 || d > 31)
+-                    throw std::runtime_error(std::string("day of month: ")
+-                             + std::to_string(d));
++                    throw_exception(std::runtime_error(std::string("day of month: ")
++                             + std::to_string(d)));
+                 x.type_ = MonthDayTime::month_day;
+                 x.u = date::month(m)/d;
+             }
+@@ -1097,8 +1107,6 @@ detail::operator<<(std::ostream& os, const MonthDayTime& x)
+ 
+ detail::Rule::Rule(const std::string& s)
+ {
+-    try
+-    {
+         using namespace date;
+         using namespace std::chrono;
+         std::istringstream in(s);
+@@ -1115,7 +1123,7 @@ detail::Rule::Rule(const std::string& s)
+                 starting_year_ = year::min();
+             }
+             else
+-                throw std::runtime_error("Didn't find expected word: " + word);
++                throw_exception(std::runtime_error("Didn't find expected word: " + word));
+         }
+         else
+         {
+@@ -1135,7 +1143,7 @@ detail::Rule::Rule(const std::string& s)
+                 ending_year_ = year::max();
+             }
+             else
+-                throw std::runtime_error("Didn't find expected word: " + word);
++                throw_exception(std::runtime_error("Didn't find expected word: " + word));
+         }
+         else
+         {
+@@ -1150,13 +1158,6 @@ detail::Rule::Rule(const std::string& s)
+         if (abbrev_ == "-")
+             abbrev_.clear();
+         assert(hours{-1} <= save_ && save_ <= hours{2});
+-    }
+-    catch (...)
+-    {
+-        std::cerr << s << '\n';
+-        std::cerr << *this << '\n';
+-        throw;
+-    }
+ }
+ 
+ detail::Rule::Rule(const Rule& r, date::year starting_year, date::year ending_year)
+@@ -1542,8 +1543,8 @@ find_first_std_rule(const std::pair<const Rule*, const Rule*>& eqr)
+     {
+         std::tie(r, ry) = find_next_rule(eqr.first, eqr.second, r, ry);
+         if (r == nullptr)
+-            throw std::runtime_error("Could not find standard offset in rule "
+-                                     + eqr.first->name());
++            throw_exception(std::runtime_error("Could not find standard offset in rule "
++                                     + eqr.first->name()));
+     }
+     return r;
+ }
+@@ -2044,7 +2045,7 @@ time_zone::init_impl()
+     auto name = get_tz_dir() + ('/' + name_);
+     std::ifstream inf(name);
+     if (!inf.is_open())
+-        throw std::runtime_error{"Unable to open " + name};
++        throw_exception(std::runtime_error{"Unable to open " + name});
+     inf.exceptions(std::ios::failbit | std::ios::badbit);
+     load_header(inf);
+     auto v = load_version(inf);
+@@ -2224,22 +2225,12 @@ leap_second::leap_second(const sys_seconds& s, detail::undocumented)
+ time_zone::time_zone(const std::string& s, detail::undocumented)
+     : adjusted_(new std::once_flag{})
+ {
+-    try
+-    {
+         using namespace date;
+         std::istringstream in(s);
+         in.exceptions(std::ios::failbit | std::ios::badbit);
+         std::string word;
+         in >> word >> name_;
+         parse_info(in);
+-    }
+-    catch (...)
+-    {
+-        std::cerr << s << '\n';
+-        std::cerr << *this << '\n';
+-        zonelets_.pop_back();
+-        throw;
+-    }
+ }
+ 
+ sys_info
+@@ -2276,21 +2267,11 @@ time_zone::get_info_impl(local_seconds tp) const
+ void
+ time_zone::add(const std::string& s)
+ {
+-    try
+-    {
+         std::istringstream in(s);
+         in.exceptions(std::ios::failbit | std::ios::badbit);
+         ws(in);
+         if (!in.eof() && in.peek() != '#')
+             parse_info(in);
+-    }
+-    catch (...)
+-    {
+-        std::cerr << s << '\n';
+-        std::cerr << *this << '\n';
+-        zonelets_.pop_back();
+-        throw;
+-    }
+ }
+ 
+ void
+@@ -2344,8 +2325,6 @@ time_zone::adjust_infos(const std::vector<Rule>& rules)
+             if (eqr.first == eqr.second)
+             {
+                 // The rule doesn't exist.  Assume this is a save
+-                try
+-                {
+                     using namespace std::chrono;
+                     using string = std::string;
+                     in.str(z.u.rule_);
+@@ -2359,12 +2338,6 @@ time_zone::adjust_infos(const std::vector<Rule>& rules)
+                     z.tag_ = zonelet::has_save;
+                     z.u.save_ = tmp;
+ #endif
+-                }
+-                catch (...)
+-                {
+-                    std::cerr << name_ << " : " << z.u.rule_ << '\n';
+-                    throw;
+-                }
+             }
+         }
+         else
+@@ -2505,9 +2478,9 @@ time_zone::get_info_impl(sys_seconds tp, int tz_int) const
+     assert(timezone != tz::standard);
+     auto y = year_month_day(floor<days>(tp)).year();
+     if (y < min_year || y > max_year)
+-        throw std::runtime_error("The year " + std::to_string(static_cast<int>(y)) +
++        throw_exception(std::runtime_error("The year " + std::to_string(static_cast<int>(y)) +
+             " is out of range:[" + std::to_string(static_cast<int>(min_year)) + ", "
+-                                 + std::to_string(static_cast<int>(max_year)) + "]");
++                                 + std::to_string(static_cast<int>(max_year)) + "]"));
+     std::call_once(*adjusted_,
+                    [this]()
+                    {
+@@ -2639,7 +2612,7 @@ get_version()
+     string version;
+     in >> version;
+     if (in.fail())
+-        throw std::runtime_error("Unable to get Timezone database version from " + path);
++        throw_exception(std::runtime_error("Unable to get Timezone database version from " + path));
+     return version;
+ }
+ # endif
+@@ -2712,7 +2685,7 @@ init_tzdb()
+         in.open(get_tz_dir() + std::string(1, folder_delimiter) +
+                 "UTC", std::ios_base::binary);
+         if (!in)
+-            throw std::runtime_error("Unable to extract leap second information");
++            throw_exception(std::runtime_error("Unable to extract leap second information"));
+         in.exceptions(std::ios::failbit | std::ios::badbit);
+         db->leap_seconds = load_just_leaps(in);
+     }
+@@ -2781,7 +2754,7 @@ int
+ curl_global()
+ {
+     if (::curl_global_init(CURL_GLOBAL_DEFAULT) != 0)
+-        throw std::runtime_error("CURL global initialization failed");
++        throw_exception(std::runtime_error("CURL global initialization failed"));
+     return 0;
+ }
+ 
+@@ -3358,7 +3331,7 @@ get_version(const std::string& path)
+             }
+         }
+     }
+-    throw std::runtime_error("Unable to get Timezone database version from " + path);
++    throw_exception(std::runtime_error("Unable to get Timezone database version from " + path));
+ }
+ 
+ static
+@@ -3385,7 +3358,7 @@ init_tzdb()
+                 msg += "\" did not install correctly to \"";
+                 msg += install;
+                 msg += "\"";
+-                throw std::runtime_error(msg);
++                throw_exception(std::runtime_error(msg));
+             }
+         }
+         if (!file_exists(install))
+@@ -3393,7 +3366,7 @@ init_tzdb()
+             std::string msg = "Timezone database not found at \"";
+             msg += install;
+             msg += "\"";
+-            throw std::runtime_error(msg);
++            throw_exception(std::runtime_error(msg));
+         }
+         db->version = get_version(path);
+     }
+@@ -3416,7 +3389,7 @@ init_tzdb()
+         std::string msg = "Timezone database not found at \"";
+         msg += install;
+         msg += "\"";
+-        throw std::runtime_error(msg);
++        throw_exception(std::runtime_error(msg));
+     }
+     db->version = get_version(path);
+ #endif  // !AUTO_DOWNLOAD
+@@ -3546,7 +3519,7 @@ tzdb::locate_zone(const std::string& tz_name) const
+                 return &*zi;
+         }
+ #endif  // !USE_OS_TZDB
+-        throw std::runtime_error(std::string(tz_name) + " not found in timezone database");
++        throw_exception(std::runtime_error(std::string(tz_name) + " not found in timezone database"));
+     }
+     return &*zi;
+ }
+@@ -3649,8 +3622,8 @@ getTimeZoneKeyName()
+     DYNAMIC_TIME_ZONE_INFORMATION dtzi{};
+     auto result = GetDynamicTimeZoneInformation(&dtzi);
+     if (result == TIME_ZONE_ID_INVALID)
+-        throw std::runtime_error("current_zone(): GetDynamicTimeZoneInformation()"
+-                                 " reported TIME_ZONE_ID_INVALID.");
++        throw_exception(std::runtime_error("current_zone(): GetDynamicTimeZoneInformation()"
++                                 " reported TIME_ZONE_ID_INVALID."));
+     auto wlen = wcslen(dtzi.TimeZoneKeyName);
+     char buf[128] = {};
+     assert(sizeof(buf) >= wlen+1);
+@@ -3671,7 +3644,7 @@ tzdb::current_zone() const
+         msg = "current_zone() failed: A mapping from the Windows Time Zone id \"";
+         msg += win_tzid;
+         msg += "\" was not found in the time zone mapping database.";
+-        throw std::runtime_error(msg);
++        throw_exception(std::runtime_error(msg));
+     }
+     return locate_zone(standard_tzid);
+ }
+@@ -3689,8 +3662,8 @@ extract_tz_name(char const* rp)
+     CONSTDATA string_view zoneinfo = "zoneinfo";
+     size_t pos = result.rfind(zoneinfo);
+     if (pos == result.npos)
+-        throw runtime_error(
+-            "current_zone() failed to find \"zoneinfo\" in " + string(result));
++        throw_exception(runtime_error(
++            "current_zone() failed to find \"zoneinfo\" in " + string(result)));
+     pos = result.find('/', pos);
+     result.remove_prefix(pos + 1);
+     return result;
+@@ -3707,8 +3680,8 @@ extract_tz_name(char const* rp)
+     CONSTDATA char zoneinfo[] = "zoneinfo";
+     size_t pos = result.rfind(zoneinfo);
+     if (pos == result.npos)
+-        throw runtime_error(
+-            "current_zone() failed to find \"zoneinfo\" in " + result);
++        throw_exception(runtime_error(
++            "current_zone() failed to find \"zoneinfo\" in " + result));
+     pos = result.find('/', pos);
+     result.erase(0, pos + 1);
+     return result;
+@@ -3723,7 +3696,7 @@ sniff_realpath(const char* timezone)
+     using namespace std;
+     char rp[PATH_MAX+1] = {};
+     if (realpath(timezone, rp) == nullptr)
+-        throw system_error(errno, system_category(), "realpath() failed");
++        throw_exception(system_error(errno, system_category(), "realpath() failed"));
+     auto result = extract_tz_name(rp);
+     return result != "posixrules";
+ }
+@@ -3755,12 +3728,12 @@ tzdb::current_zone() const
+             if (use_realpath)
+             {
+                 if (realpath(timezone, rp) == nullptr)
+-                    throw system_error(errno, system_category(), "realpath() failed");
++                    throw_exception(system_error(errno, system_category(), "realpath() failed"));
+             }
+             else
+             {
+                 if (readlink(timezone, rp, sizeof(rp)-1) <= 0)
+-                    throw system_error(errno, system_category(), "readlink() failed");
++                    throw_exception(system_error(errno, system_category(), "readlink() failed"));
+             }
+             return locate_zone(extract_tz_name(rp));
+         }
+@@ -3785,7 +3758,7 @@ tzdb::current_zone() const
+             if (readlink(timezone, rp, sizeof(rp)-1) > 0)
+                 result = string(rp);
+             else
+-                throw system_error(errno, system_category(), "readlink() failed");
++                throw_exception(system_error(errno, system_category(), "readlink() failed"));
+ 
+             const size_t pos = result.find(get_tz_dir());
+             if (pos != result.npos)
+@@ -3853,7 +3826,7 @@ tzdb::current_zone() const
+         }
+         // Fall through to try other means.
+     }
+-    throw std::runtime_error("Could not get current timezone");
++    throw_exception(std::runtime_error("Could not get current timezone"));
+ }
+ 
+ #endif  // !_WIN32

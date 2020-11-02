@@ -1,0 +1,11 @@
+--- i/src/tz.cpp
++++ w/src/tz.cpp
+@@ -3397,7 +3397,7 @@ init_tzdb()
+     CONSTDATA char*const files[] =
+     {
+         "africa", "antarctica", "asia", "australasia", "backward", "etcetera", "europe",
+-        "pacificnew", "northamerica", "southamerica", "systemv", "leapseconds"
++        /*"pacificnew",*/ "northamerica", "southamerica", /*"systemv",*/ "leapseconds"
+     };
+ 
+     for (const auto& filename : files)

@@ -1,0 +1,54 @@
+--- i/doctest/doctest.h
++++ w/doctest/doctest.h
+@@ -5257,15 +5257,10 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
+         }
+ 
+         void printVersion() {
+-            if(opt.no_version == false)
+-                s << Color::Cyan << "[doctest] " << Color::None << "doctest version is \""
+-                  << DOCTEST_VERSION_STR << "\"\n";
+         }
+ 
+         void printIntro() {
+             printVersion();
+-            s << Color::Cyan << "[doctest] " << Color::None
+-              << "run with \"--" DOCTEST_OPTIONS_PREFIX_DISPLAY "help\" for options\n";
+         }
+ 
+         void printHelp() {
+@@ -5481,7 +5476,7 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
+               << " | " << (p.numAssertsFailed > 0 ? Color::Red : Color::None) << std::setw(6)
+               << p.numAssertsFailed << " failed" << Color::None << " |\n";
+             s << Color::Cyan << "[doctest] " << Color::None
+-              << "Status: " << (p.numTestCasesFailed > 0 ? Color::Red : Color::Green)
++              << (p.numTestCasesFailed > 0 ? Color::Red : Color::Green)
+               << ((p.numTestCasesFailed > 0) ? "FAILURE!" : "SUCCESS!") << Color::None << std::endl;
+         }
+ 
+--- i/doctest/parts/doctest.cpp
++++ w/doctest/parts/doctest.cpp
+@@ -2640,15 +2640,10 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
+         }
+ 
+         void printVersion() {
+-            if(opt.no_version == false)
+-                s << Color::Cyan << "[doctest] " << Color::None << "doctest version is \""
+-                  << DOCTEST_VERSION_STR << "\"\n";
+         }
+ 
+         void printIntro() {
+             printVersion();
+-            s << Color::Cyan << "[doctest] " << Color::None
+-              << "run with \"--" DOCTEST_OPTIONS_PREFIX_DISPLAY "help\" for options\n";
+         }
+ 
+         void printHelp() {
+@@ -2864,7 +2859,7 @@ DOCTEST_CLANG_SUPPRESS_WARNING_POP
+               << " | " << (p.numAssertsFailed > 0 ? Color::Red : Color::None) << std::setw(6)
+               << p.numAssertsFailed << " failed" << Color::None << " |\n";
+             s << Color::Cyan << "[doctest] " << Color::None
+-              << "Status: " << (p.numTestCasesFailed > 0 ? Color::Red : Color::Green)
++              << (p.numTestCasesFailed > 0 ? Color::Red : Color::Green)
+               << ((p.numTestCasesFailed > 0) ? "FAILURE!" : "SUCCESS!") << Color::None << std::endl;
+         }
+ 
