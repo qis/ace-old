@@ -1,0 +1,16 @@
+/*
+.*
+!/ports/
+!.clang-format
+!.clang-tidy
+!.editorconfig
+!.gitattributes
+!.gitignore
+!/CMakeLists.txt
+!/CMakeSettings.json
+!/format.cmake
+!/license.txt
+!/make.cmd
+!/makefile
+!/readme.md
+!/toolchain.cmake
