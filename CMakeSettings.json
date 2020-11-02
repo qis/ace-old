@@ -1,0 +1,31 @@
+{
+  "configurations": [
+    {
+      "name": "Ace",
+      "generator": "Ninja",
+      "configurationType": "Ace",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
+      "buildRoot": "${projectDir}\\build\\vs\\ace",
+      "installRoot": "${projectDir}"
+    },
+    {
+      "name": "Debug",
+      "generator": "Ninja",
+      "configurationType": "Debug",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
+      "buildRoot": "${projectDir}\\build\\vs\\debug",
+      "installRoot": "${projectDir}"
+    },
+    {
+      "name": "Release",
+      "generator": "Ninja",
+      "configurationType": "Release",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
+      "buildRoot": "${projectDir}\\build\\vs\\release",
+      "installRoot": "${projectDir}"
+    }
+  ]
+}
