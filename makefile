@@ -1,6 +1,4 @@
-MAKEFLAGS += --no-print-directory
-
-MFKAGS =
+MFLAGS = --no-print-directory
 TARGET =
 
 all: benchmark doctest date fmt pugixml tbb brotli bzip2 lzma zlib zstd
