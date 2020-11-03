@@ -14,6 +14,7 @@ if(WIN32)
   # Toolset
   set(CMAKE_C_COMPILER "cl.exe" CACHE STRING "")
   set(CMAKE_CXX_COMPILER "cl.exe" CACHE STRING "")
+  set(CMAKE_RC_COMPILER "rc.exe" CACHE STRING "")
   set(CMAKE_LINKER "link.exe" CACHE STRING "")
   set(CMAKE_AR "lib.exe" CACHE STRING "")
 
@@ -56,10 +57,10 @@ if(WIN32)
   set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES}" CACHE STRING "")
 
   # Assembler Flags
-  set(CMAKE_ASM_MASM_FLAGS_INIT "-nologo")
+  set(CMAKE_ASM_MASM_FLAGS_INIT "/nologo")
 
   # Resource Compiler Flags
-  set(CMAKE_RC_FLAGS_INIT "-nologo -c65001 ${MSVC_DEFINES}")
+  set(CMAKE_RC_FLAGS_INIT "/nologo /c65001")
   set(CMAKE_RC_FLAGS_DEBUG_INIT "")
   set(CMAKE_RC_FLAGS_RELEASE_INIT "/DNDEBUG")
   set(CMAKE_RC_FLAGS_MINSIZEREL_INIT "/DNDEBUG")
