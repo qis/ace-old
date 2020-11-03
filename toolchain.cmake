@@ -91,14 +91,14 @@ else()
   set(CMAKE_CXX_FLAGS "-fcoroutines -fno-exceptions -fno-rtti ${CMAKE_C_FLAGS}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_ACE "${CMAKE_C_FLAGS_ACE}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" CACHE STRING "")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -static-libstdc++" CACHE STRING "")
 
   # Linker Flags
   foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
     set(CMAKE_${LINKER}_FLAGS "-L${CMAKE_CURRENT_LIST_DIR}/lib -Wl,--as-needed" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_ACE "" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_DEBUG "" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_RELEASE "-static-libstdc++ -Wl,-s -flto" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -flto" CACHE STRING "")
   endforeach()
 
   # Position Independent Code
