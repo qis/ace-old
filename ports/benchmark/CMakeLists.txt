@@ -27,6 +27,8 @@ endif()
 
 if(MSVC)
   target_compile_options(benchmark PRIVATE /wd4722)
+else()
+  target_compile_options(benchmark PRIVATE -Wno-stringop-truncation)
 endif()
 
 if(MSVC AND BUILD_SHARED_LIBS)
