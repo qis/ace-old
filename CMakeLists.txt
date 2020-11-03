@@ -21,13 +21,13 @@ target_link_libraries(objects PUBLIC ace::fmt)
 add_executable(${PROJECT_NAME} src/main.cpp src/main.manifest src/main.rc)
 target_link_libraries(${PROJECT_NAME} PRIVATE objects)
 
-# Test
-add_executable(test EXCLUDE_FROM_ALL src/test.cpp src/main.manifest)
-target_link_libraries(test PRIVATE objects ace::doctest)
+# Tests
+add_executable(tests EXCLUDE_FROM_ALL src/test.cpp src/main.manifest)
+target_link_libraries(tests PRIVATE objects ace::doctest)
 
-# Benchmark
-add_executable(benchmark EXCLUDE_FROM_ALL src/benchmark.cpp src/main.manifest)
-target_link_libraries(benchmark PRIVATE objects ace::benchmark)
+# Benchmarks
+add_executable(benchmarks EXCLUDE_FROM_ALL src/benchmark.cpp src/main.manifest)
+target_link_libraries(benchmarks PRIVATE objects ace::benchmark)
 
 # Install
 install(TARGETS ${PROJECT_NAME} DESTINATION .)
