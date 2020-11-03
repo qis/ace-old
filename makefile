@@ -24,17 +24,17 @@ run: configure
 
 # Test
 test: configure
-	@ninja -C build/$(SYSTEM) -f build-Ace.ninja test
-	@cmake -E chdir build/$(SYSTEM)/Ace ./test
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja test
-	@cmake -E chdir build/$(SYSTEM)/Debug ./test
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja test
-	@cmake -E chdir build/$(SYSTEM)/Release ./test
+	@ninja -C build/$(SYSTEM) -f build-Ace.ninja tests
+	@cmake -E chdir build/$(SYSTEM)/Ace ./tests
+	@ninja -C build/$(SYSTEM) -f build-Debug.ninja tests
+	@cmake -E chdir build/$(SYSTEM)/Debug ./tests
+	@ninja -C build/$(SYSTEM) -f build-Release.ninja tests
+	@cmake -E chdir build/$(SYSTEM)/Release ./tests
 
 # Benchmark
 benchmark: configure
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja benchmark
-	@cmake -E chdir build/$(SYSTEM)/Release ./benchmark
+	@ninja -C build/$(SYSTEM) -f build-Release.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM)/Release ./benchmarks
 
 # Format
 format:

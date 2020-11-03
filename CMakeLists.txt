@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 project(test VERSION 0.1.0 LANGUAGES CXX)
 
+# Application
 add_executable(main EXCLUDE_FROM_ALL src/main.cpp src/main.manifest)
 target_link_libraries(main PRIVATE ace::fmt)
 
-add_executable(test EXCLUDE_FROM_ALL src/test.cpp src/main.manifest)
-
-target_link_libraries(test PRIVATE
+# Tests
+add_executable(tests EXCLUDE_FROM_ALL src/test.cpp src/main.manifest)
+target_link_libraries(tests PRIVATE
   # Utility
   ace::doctest
   ace::fmt
@@ -21,5 +22,6 @@ target_link_libraries(test PRIVATE
   ace::zlib
   ace::zstd)
 
-add_executable(benchmark EXCLUDE_FROM_ALL src/benchmark.cpp src/main.manifest)
-target_link_libraries(benchmark PRIVATE ace::benchmark ace::fmt)
+# Benchmarks
+add_executable(benchmarks EXCLUDE_FROM_ALL src/benchmark.cpp src/main.manifest)
+target_link_libraries(benchmarks PRIVATE ace::benchmark)
