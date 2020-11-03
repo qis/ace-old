@@ -174,6 +174,10 @@ endif()
 # Install
 install(TARGETS lzma)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  install(FILES $<TARGET_PDB_FILE:lzma> DESTINATION bin)
+endif()
+
 if(NOT SKIP_INSTALL_HEADERS)
   install(DIRECTORY src/src/liblzma/api/lzma DESTINATION include)
   install(FILES src/src/liblzma/api/lzma.h DESTINATION include)

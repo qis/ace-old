@@ -24,6 +24,10 @@ endif()
 # Install
 install(TARGETS pugixml)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  install(FILES $<TARGET_PDB_FILE:pugixml> DESTINATION bin)
+endif()
+
 if(NOT SKIP_INSTALL_HEADERS)
   install(FILES ${headers} DESTINATION include)
 endif()

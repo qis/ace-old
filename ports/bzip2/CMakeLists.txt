@@ -46,6 +46,10 @@ endif()
 # Install
 install(TARGETS bzip2)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  install(FILES $<TARGET_PDB_FILE:bzip2> DESTINATION bin)
+endif()
+
 if(NOT SKIP_INSTALL_HEADERS)
   install(FILES ${headers} DESTINATION include)
 endif()

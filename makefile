@@ -37,26 +37,22 @@ zstd:
 	@$(MAKE) $(MFLAGS) install/target TARGET=zstd
 
 configure/target: \
-  build/$(TARGET)/ace/rules.ninja \
   build/$(TARGET)/debug/rules.ninja \
-  build/$(TARGET)/release/rules.ninja
+  build/$(TARGET)/release/rules.ninja \
+  build/$(TARGET)/minsizerel/rules.ninja \
+  build/$(TARGET)/relwithdebinfo/rules.ninja
 
 build/target: configure/target
-	@ninja -C build/$(TARGET)/ace
 	@ninja -C build/$(TARGET)/debug
 	@ninja -C build/$(TARGET)/release
+	@ninja -C build/$(TARGET)/minsizerel
+	@ninja -C build/$(TARGET)/relwithdebinfo
 
 install/target: build/target
-	@ninja -C build/$(TARGET)/ace install
 	@ninja -C build/$(TARGET)/debug install
 	@ninja -C build/$(TARGET)/release install
-
-build/$(TARGET)/ace/rules.ninja: ports/$(TARGET)/CMakeLists.txt
-	@cmake -GNinja -DCMAKE_BUILD_TYPE=Ace -DBUILD_SHARED_LIBS=ON \
-	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/ports/toolchain.cmake" \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)" \
-	  -B build/$(TARGET)/ace \
-	  -S ports/$(TARGET)
+	@ninja -C build/$(TARGET)/minsizerel install
+	@ninja -C build/$(TARGET)/relwithdebinfo install
 
 build/$(TARGET)/debug/rules.ninja: ports/$(TARGET)/CMakeLists.txt
 	@cmake -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON \
@@ -70,6 +66,20 @@ build/$(TARGET)/release/rules.ninja: ports/$(TARGET)/CMakeLists.txt
 	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/ports/toolchain.cmake" \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)" \
 	  -B build/$(TARGET)/release \
+	  -S ports/$(TARGET)
+
+build/$(TARGET)/minsizerel/rules.ninja: ports/$(TARGET)/CMakeLists.txt
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=MinSizeRel -DBUILD_SHARED_LIBS=OFF \
+	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/ports/toolchain.cmake" \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)" \
+	  -B build/$(TARGET)/minsizerel \
+	  -S ports/$(TARGET)
+
+build/$(TARGET)/relwithdebinfo/rules.ninja: ports/$(TARGET)/CMakeLists.txt
+	@cmake -GNinja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_SHARED_LIBS=ON \
+	  -DCMAKE_TOOLCHAIN_FILE="$(CURDIR)/ports/toolchain.cmake" \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)" \
+	  -B build/$(TARGET)/relwithdebinfo \
 	  -S ports/$(TARGET)
 
 # Clean

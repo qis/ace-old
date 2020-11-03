@@ -34,6 +34,10 @@ endif()
 # Install
 install(TARGETS brotli)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  install(FILES $<TARGET_PDB_FILE:brotli> DESTINATION bin)
+endif()
+
 if(NOT SKIP_INSTALL_HEADERS)
   install(DIRECTORY src/c/include/brotli DESTINATION include)
 endif()

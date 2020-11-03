@@ -65,6 +65,10 @@ endif()
 # Install
 install(TARGETS tbb)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  install(FILES $<TARGET_PDB_FILE:tbb> DESTINATION bin)
+endif()
+
 if(NOT SKIP_INSTALL_HEADERS)
   install(DIRECTORY src/include/tbb DESTINATION include FILES_MATCHING
     PATTERN "tbbmalloc_proxy.h" EXCLUDE

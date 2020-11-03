@@ -26,6 +26,10 @@ endif()
 # Install
 install(TARGETS tz)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  install(FILES $<TARGET_PDB_FILE:tz> DESTINATION bin)
+endif()
+
 if(NOT SKIP_INSTALL_HEADERS)
   install(FILES ${headers} DESTINATION include/date)
 

@@ -25,6 +25,10 @@ target_compile_definitions(doctest
 # Install
 install(TARGETS doctest)
 
+if(WIN32 AND BUILD_SHARED_LIBS)
+  install(FILES $<TARGET_PDB_FILE:doctest> DESTINATION bin)
+endif()
+
 if(NOT SKIP_INSTALL_HEADERS)
   install(FILES ${headers} DESTINATION include)
 endif()
