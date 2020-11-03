@@ -8,7 +8,6 @@
 !.gitignore
 !/CMakeLists.txt
 !/CMakeSettings.json
-!/cmake-variants.json
 !/license.txt
 !/make.cmd
 !/makefile
