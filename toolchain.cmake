@@ -78,6 +78,7 @@ else()
 
   # WARN Flags
   set(WARN_FLAGS "-Werror -Wall -Wextra -Wpedantic")
+  set(WARN_FLAGS "${WARN_FLAGS} -Wno-deprecated-declarations")
   set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-parameter")
   set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-variable")
 
