@@ -4,14 +4,15 @@ TARGET = application
 
 # Build
 all: configure
-	@ninja -C build/$(SYSTEM) -f build-Ace.ninja
 	@ninja -C build/$(SYSTEM) -f build-Debug.ninja
 	@ninja -C build/$(SYSTEM) -f build-Release.ninja
+	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja
+	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja
 
 # Configure
 build/$(SYSTEM)/build.ninja: CMakeLists.txt
 	@cmake -G "Ninja Multi-Config" \
-	  -DCMAKE_CONFIGURATION_TYPES="Ace;Debug;Release" \
+	  -DCMAKE_CONFIGURATION_TYPES="Debug;Release;MinSizeRel;RelWithDebInfo" \
 	  -DCMAKE_TOOLCHAIN_FILE="$(PREFIX)/toolchain.cmake" \
 	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)" \
 	  -B build/$(SYSTEM)
@@ -25,17 +26,21 @@ run: configure
 
 # Test
 test: configure
-	@ninja -C build/$(SYSTEM) -f build-Ace.ninja tests
-	@cmake -E chdir build/$(SYSTEM)/Ace ./tests
 	@ninja -C build/$(SYSTEM) -f build-Debug.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/Debug ./tests
 	@ninja -C build/$(SYSTEM) -f build-Release.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/Release ./tests
+	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja tests
+	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./tests
+	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja tests
+	@cmake -E chdir build/$(SYSTEM)/RelWithDebInfo ./tests
 
 # Benchmark
 benchmark: configure
 	@ninja -C build/$(SYSTEM) -f build-Release.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/Release ./benchmarks
+	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./benchmarks
 
 # Benchmark
 install: configure

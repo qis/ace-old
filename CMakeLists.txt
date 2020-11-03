@@ -14,7 +14,11 @@ file(GLOB sources
 
 # Objects
 add_library(objects OBJECT ${sources})
-target_include_directories(objects PUBLIC src)
+
+target_include_directories(objects PUBLIC
+  ${CMAKE_CURRENT_BINARY_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
 target_link_libraries(objects PUBLIC ace::fmt)
 
 # Application
