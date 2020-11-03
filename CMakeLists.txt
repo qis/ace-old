@@ -6,17 +6,15 @@ set(PROJECT_VENDOR "Vendor")
 configure_file(res/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/version.h LF)
 
 # Sources
-set(sources
+file(GLOB sources
+  src/ice/*.hpp
+  src/ice/*.cpp
   src/application.hpp
   src/application.cpp)
 
 # Objects
 add_library(objects OBJECT ${sources})
-
-target_include_directories(objects PUBLIC
-  ${CMAKE_CURRENT_BINARY_DIR}/src
-  ${CMAKE_CURRENT_SOURCE_DIR}/src)
-
+target_include_directories(objects PUBLIC src)
 target_link_libraries(objects PUBLIC ace::fmt)
 
 # Application
