@@ -94,7 +94,7 @@ PenaltyReturnTypeOnItsOwnLine: 10000
 ReflowComments: false
 FixNamespaceComments: true
 SpacesBeforeTrailingComments: 2
-CommentPragmas: '^ (NOTE|TODO):'
+CommentPragmas: '^ (NOTE|TODO): '
 
 # Sorting
 SortUsingDeclarations: false
@@ -115,11 +115,11 @@ IncludeCategories:
     Priority: 1
 
     # Project Config
-  - Regex: '^<ice/config.hpp>$'
+  - Regex: '^<ace/config.hpp>$'
     Priority: 2
 
     # Project Headers
-  - Regex: '^<ice/'
+  - Regex: '^<ace/'
     Priority: 3
 
     # Windows Headers
@@ -143,21 +143,10 @@ IncludeCategories:
     Priority: 7
 
 # Sources: a.hpp is main include for a.cpp, a_test.cpp, etc.
-#IncludeIsMainRegex: '(_test|_windows|_linux)?$'
+IncludeIsMainRegex: '(_test|_windows|_linux|_posix)?$'
 
 # Headers: a.hpp, a_base.hpp, etc. are main includes for a.cpp
-#IncludeIsMainSourceRegex: '(_base|_impl)?$'
-
-# Macros
-#ForEachMacros:
-#  - co_await
-
-#MacroBlockBegin: '^BEGIN_(MSG_MAP|MSG_MAP_EX|UPDATE_UI_MAP)'
-#MacroBlockEnd: '^END_(MSG_MAP|UPDATE_UI_MAP)'
-
-#StatementMacros:
-#  - Q_UNUSED
-#  - QT_REQUIRE_VERSION
+IncludeIsMainSourceRegex: '(_base|_impl)?$'
 ---
 Language: ObjC
 DisableFormat: true
