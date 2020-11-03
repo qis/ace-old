@@ -42,7 +42,7 @@ benchmark: configure
 	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./benchmarks
 
-# Benchmark
+# Install
 install: configure
 	@ninja -C build/$(SYSTEM) -f build-Release.ninja install
 
