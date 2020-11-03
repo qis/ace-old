@@ -1,6 +1,6 @@
 --- i/include/fmt/core.h
 +++ w/include/fmt/core.h
-@@ -17,6 +17,15 @@
+@@ -17,6 +17,14 @@
  #include <type_traits>
  #include <vector>
  
@@ -9,7 +9,6 @@
 +#define FMT_SHARED 1
 +#endif
 +
-+#define FMT_EXCEPTIONS 0
 +#define FMT_STATIC_THOUSANDS_SEPARATOR 1
 +// ports config end
 +

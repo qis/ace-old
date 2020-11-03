@@ -1,12 +1,11 @@
 --- i/doctest/doctest.h
 +++ w/doctest/doctest.h
-@@ -42,6 +42,12 @@
+@@ -42,6 +42,11 @@
  #ifndef DOCTEST_LIBRARY_INCLUDED
  #define DOCTEST_LIBRARY_INCLUDED
  
 +// ports config begin
 +#define DOCTEST_CONFIG_IMPLEMENTATION_IN_DLL
-+#define DOCTEST_CONFIG_NO_EXCEPTIONS_BUT_WITH_ALL_ASSERTS
 +#define DOCTEST_CONFIG_USE_IOSFWD
 +// ports config end
 +

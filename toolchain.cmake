@@ -88,7 +88,7 @@ else()
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g" CACHE STRING "")
   set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -DNDEBUG" CACHE STRING "")
 
-  set(CMAKE_CXX_FLAGS "-fcoroutines -fno-exceptions -fno-rtti ${CMAKE_C_FLAGS}" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS "-fcoroutines ${CMAKE_C_FLAGS}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_ACE "${CMAKE_C_FLAGS_ACE}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -static-libstdc++" CACHE STRING "")
@@ -131,9 +131,9 @@ list(APPEND __PORTS_LIBRARIES benchmark doctest fmt tz pugixml tbb)
 list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
 
 # Suffix
-set(__PORTS_LIBRARY_SUFFIX "\$<\$<CONFIG:Ace>:a>")
-string(APPEND __PORTS_LIBRARY_SUFFIX "$<\$<CONFIG:Debug>:d>")
-string(APPEND __PORTS_LIBRARY_SUFFIX "$<\$<CONFIG:Release>:r>")
+set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Ace>:a>")
+string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d>")
+string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r>")
 
 if(WIN32)
   string(APPEND __PORTS_LIBRARY_SUFFIX ".lib")
@@ -151,10 +151,12 @@ endforeach()
 # Dependencies
 if(WIN32)
   set_property(TARGET ace::benchmark APPEND PROPERTY
-    INTERFACE_LINK_LIBRARIES "shlwapi.lib")
+    INTERFACE_LINK_LIBRARIES "$<$<CONFIG:Release>:shlwapi.lib>")
 else()
+  set_property(TARGET ace::tbb APPEND PROPERTY
+    INTERFACE_LINK_LIBRARIES "$<$<CONFIG:Release>:dl>")
   set_property(TARGET ace::brotli APPEND PROPERTY
-    INTERFACE_LINK_LIBRARIES "m")
+    INTERFACE_LINK_LIBRARIES "$<$<CONFIG:Release>:m>")
 endif()
 
 # Cleanup

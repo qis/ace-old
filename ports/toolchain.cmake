@@ -99,7 +99,6 @@ function(download_source URL SHA DST)
     message(STATUS "Applying: ${patch}")
     execute_process(
       COMMAND git apply --ignore-whitespace "${CMAKE_CURRENT_SOURCE_DIR}/${patch}"
-      COMMAND_ERROR_IS_FATAL ANY
       WORKING_DIRECTORY ${__SRC})
 
     execute_process(

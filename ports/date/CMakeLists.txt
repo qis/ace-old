@@ -3,7 +3,7 @@ project(date VERSION 3.0.0 LANGUAGES CXX)
 
 set(URL "https://github.com/HowardHinnant/date/archive/v${PROJECT_VERSION}.tar.gz")
 set(SHA "87bba2eaf0ebc7ec539e5e62fc317cb80671a337c1fb1b84cb9e4d42c6dbebe3")
-download_source(${URL} ${SHA} src configure.patch compatibility.patch tzdata.patch)
+download_source(${URL} ${SHA} src configure.patch tzdata.patch)
 
 # Headers
 set(headers
