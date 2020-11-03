@@ -1,0 +1,11 @@
+--- i/include/tbb/detail/_config.h
++++ w/include/tbb/detail/_config.h
+@@ -17,6 +17,8 @@
+ #ifndef __TBB_detail__config_H
+ #define __TBB_detail__config_H
+ 
++#define __TBB_NO_IMPLICIT_LINKAGE 1
++
+ /** This header is supposed to contain macro definitions only.
+     The macros defined here are intended to control such aspects of TBB build as
+     - presence of compiler features
