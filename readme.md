@@ -95,9 +95,7 @@ Add `C:\Ace\bin` to the system `Path` environment variable.
 Install basic development packages.
 
 ```sh
-sudo apt install -y binutils-dev debconf-utils libc6-dev libgcc-9-dev manpages-dev
-sudo apt install -y -o APT::Install-Suggests=0 -o APT::Install-Recommends=0 \
-  autoconf automake bison flex gdb make nasm ninja-build pkgconf sqlite3
+sudo apt install -y binutils-dev gcc-10 g++-10 gdb make nasm ninja-build manpages-dev
 ```
 
 Install [CMake](https://cmake.org/).
@@ -126,29 +124,6 @@ export PATH="/opt/node/bin:${PATH}"
 EOF
 sudo chmod 0755 /etc/profile.d/node.sh
 . /etc/profile.d/node.sh
-```
-
-Install [LLVM](https://llvm.org/).
-
-```sh
-sudo rm -rf /opt/llvm; sudo mkdir -p /opt/llvm
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-sudo tar xf clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz -C /opt/llvm --strip-components=1
-rm -f clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-sudo tee /etc/profile.d/llvm.sh >/dev/null <<'EOF'
-export PATH="/opt/llvm/bin:${PATH}"
-EOF
-sudo chmod 0755 /etc/profile.d/llvm.sh
-. /etc/profile.d/llvm.sh
-```
-
-Set default system compiler.
-
-```sh
-sudo update-alternatives --remove-all cc
-sudo update-alternatives --remove-all c++
-sudo update-alternatives --install /usr/bin/cc  cc  /opt/llvm/bin/clang   100
-sudo update-alternatives --install /usr/bin/c++ c++ /opt/llvm/bin/clang++ 100
 ```
 
 </details>

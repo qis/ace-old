@@ -30,12 +30,17 @@ endif()
 
 if(MSVC)
   target_compile_options(bzip2 PRIVATE /wd4244 /wd4267 /wd5105)
+else()
+  target_compile_options(bzip2 PRIVATE -Wno-implicit-fallthrough)
 endif()
 
 if(WIN32)
   target_compile_definitions(bzip2 PRIVATE
     _CRT_NONSTDC_NO_DEPRECATE
     _CRT_SECURE_NO_DEPRECATE)
+else()
+  target_compile_definitions(bzip2 PRIVATE
+    BZ_STRICT_ANSI)
 endif()
 
 # Install

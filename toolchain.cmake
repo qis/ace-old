@@ -69,94 +69,52 @@ if(WIN32)
   unset(MSVC_DEFINES)
   unset(MSVC_FLAGS)
 else()
-  # LLVM
-  find_program(LLVM_ROOT clang PATHS /opt/llvm/bin REQUIRED)
-  get_filename_component(LLVM_ROOT ${LLVM_ROOT} DIRECTORY)
-  get_filename_component(LLVM_ROOT ${LLVM_ROOT} DIRECTORY)
-
   # Toolset
-  set(CMAKE_C_COMPILER "${LLVM_ROOT}/bin/clang" CACHE STRING "")
-  set(CMAKE_CXX_COMPILER "${LLVM_ROOT}/bin/clang++" CACHE STRING "")
-  set(CMAKE_RANLIB "${LLVM_ROOT}/bin/llvm-ranlib" CACHE STRING "")
-  set(CMAKE_AR "${LLVM_ROOT}/bin/llvm-ar" CACHE STRING "")
-  set(CMAKE_NM "${LLVM_ROOT}/bin/llvm-nm" CACHE STRING "")
+  set(CMAKE_C_COMPILER "gcc-10" CACHE STRING "")
+  set(CMAKE_CXX_COMPILER "g++-10" CACHE STRING "")
+  set(CMAKE_RANLIB "gcc-ranlib-10" CACHE STRING "")
+  set(CMAKE_AR "gcc-ar-10" CACHE STRING "")
+  set(CMAKE_NM "gcc-nm-10" CACHE STRING "")
 
-  # LLVM Defines
-  set(LLVM_DEFINES "-D_DEFAULT_SOURCE=1")
-
-  # LLVM Flags
-  set(LLVM_FLAGS "-Werror -Wall -Wextra -Wpedantic -Wrange-loop-analysis")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -Wno-gnu")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -Wno-c++98-compat")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -Wno-c++98-compat-pedantic")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -Wno-unused-parameter")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -Wno-unused-variable")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -Wno-nonportable-system-include-path")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -Wno-nested-anon-types")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -fdiagnostics-absolute-paths")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -fcolor-diagnostics")
-  set(LLVM_FLAGS "${LLVM_FLAGS} -fansi-escape-codes")
+  # WARN Flags
+  set(WARN_FLAGS "-Werror -Wall -Wextra -Wpedantic")
+  set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-parameter")
+  set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-variable")
 
   # Compiler Flags
-  set(CMAKE_C_FLAGS "-fasm -mavx2 ${LLVM_FLAGS} ${LLVM_DEFINES}" CACHE STRING "")
+  set(CMAKE_C_FLAGS "-mavx2 -fasm ${WARN_FLAGS} -pthread -D_DEFAULT_SOURCE=1" CACHE STRING "")
   set(CMAKE_C_FLAGS_ACE "-O1 -g" CACHE STRING "")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g" CACHE STRING "")
-  set(CMAKE_C_FLAGS_RELEASE "-O3 -flto=full -DNDEBUG" CACHE STRING "")
+  set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -DNDEBUG" CACHE STRING "")
 
-  set(CMAKE_CXX_FLAGS "-stdlib=libc++ -fno-exceptions -fno-rtti ${CMAKE_C_FLAGS}" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS "-fno-exceptions -fno-rtti ${CMAKE_C_FLAGS}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_ACE "${CMAKE_C_FLAGS_ACE}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" CACHE STRING "")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -fwhole-program-vtables -fvirtual-function-elimination" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "")
 
   # Linker Flags
   foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
-    set(CMAKE_${LINKER}_FLAGS "-L${CMAKE_CURRENT_LIST_DIR}/lib -fuse-ld=lld -pthread -Wl,--as-needed" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS "-L${CMAKE_CURRENT_LIST_DIR}/lib -Wl,--as-needed" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_ACE "" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_DEBUG "" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -static-libstdc++ ${LLVM_ROOT}/lib/libc++abi.a -flto=full" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_RELEASE "-static-libstdc++ -Wl,-s -flto" CACHE STRING "")
   endforeach()
 
   # Position Independent Code
-  set(CMAKE_POSITION_INDEPENDENT_CODE_ACE ON CACHE BOOL "")
-  set(CMAKE_POSITION_INDEPENDENT_CODE_DEBUG ON CACHE BOOL "")
-  set(CMAKE_POSITION_INDEPENDENT_CODE_RELEASE OFF CACHE BOOL "")
+  set(CMAKE_POSITION_INDEPENDENT_CODE ON CACHE BOOL "")
 
   # Runtime Path
   if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(CMAKE_BUILD_RPATH "${LLVM_ROOT}/lib;${CMAKE_CURRENT_LIST_DIR}/lib" CACHE STRING "")
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH ON CACHE BOOL "")
+    set(CMAKE_INSTALL_RPATH "${CMAKE_CURRENT_LIST_DIR}/lib" CACHE STRING "")
   endif()
 
   # Cleanup
-  unset(LLVM_STATIC)
-  unset(LLVM_DEFINES)
-  unset(LLVM_FLAGS)
-  unset(LLVM_ROOT)
+  unset(WARN_FLAGS)
 endif()
 
 # Include Directories
 include_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/include)
-
-# Static Analysis
-if(ENABLE_STATIC_ANALYSIS)
-  if(WIN32)
-    set(ProgramFilesX86 "ProgramFiles(x86)")
-    set(ProgramFilesX86 "$ENV{${ProgramFilesX86}}")
-    find_program(CLANG_TIDY NAMES clang-tidy PATHS
-      $ENV{ProgramW6432}/LLVM/bin
-      $ENV{ProgramFiles}/LLVM/bin
-      ${ProgramFilesX86}/LLVM/bin)
-  else()
-    find_program(CLANG_TIDY NAMES clang-tidy PATHS
-      /opt/llvm/bin /usr/local/bin /usr/bin)
-  endif()
-
-  if(NOT CLANG_TIDY)
-    message(FATAL_ERROR "Could not find executable: clang-tidy")
-  endif()
-
-  set(CMAKE_C_CLANG_TIDY "${CLANG_TIDY}" CACHE STRING "")
-  set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY}" CACHE STRING "")
-endif()
 
 # CMake
 set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")

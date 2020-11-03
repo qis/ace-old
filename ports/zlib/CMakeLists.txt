@@ -42,6 +42,8 @@ endif()
 
 if(MSVC)
   target_compile_options(zlib PRIVATE /wd4267)
+else()
+  target_compile_options(zlib PRIVATE -Wno-implicit-fallthrough -Wno-multistatement-macros)
 endif()
 
 # Install

@@ -106,10 +106,7 @@ if(WIN32)
     src/src/tbb/intel64-masm/itsx.asm)
 else()
   target_link_libraries(tbb PRIVATE dl)
-  target_compile_options(tbb PRIVATE
-    -Wno-keyword-macro
-    -Wno-deprecated-copy
-    -Wno-deprecated-volatile)
+  target_compile_options(tbb PRIVATE -Wno-class-memaccess -Wno-deprecated-copy -Wno-volatile)
 endif()
 
 # Install

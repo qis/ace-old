@@ -1,17 +1,41 @@
+MAKEFLAGS += --no-print-directory
+
 MFKAGS =
 TARGET =
 
-all:
+all: benchmark doctest date fmt pugixml tbb brotli bzip2 lzma zlib zstd
+
+benchmark:
 	@$(MAKE) $(MFLAGS) install/target TARGET=benchmark
+
+doctest:
 	@$(MAKE) $(MFLAGS) install/target TARGET=doctest
+
+date:
 	@$(MAKE) $(MFLAGS) install/target TARGET=date
+
+fmt:
 	@$(MAKE) $(MFLAGS) install/target TARGET=fmt
+
+pugixml:
 	@$(MAKE) $(MFLAGS) install/target TARGET=pugixml
+
+tbb:
 	@$(MAKE) $(MFLAGS) install/target TARGET=tbb
+
+brotli:
 	@$(MAKE) $(MFLAGS) install/target TARGET=brotli
+
+bzip2:
 	@$(MAKE) $(MFLAGS) install/target TARGET=bzip2
+
+lzma:
 	@$(MAKE) $(MFLAGS) install/target TARGET=lzma
+
+zlib:
 	@$(MAKE) $(MFLAGS) install/target TARGET=zlib
+
+zstd:
 	@$(MAKE) $(MFLAGS) install/target TARGET=zstd
 
 configure/target: \
