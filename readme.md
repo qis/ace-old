@@ -105,9 +105,11 @@ sudo rm -rf /opt/cmake; sudo mkdir -p /opt/cmake
 wget https://github.com/Kitware/CMake/releases/download/v3.18.4/cmake-3.18.4-Linux-x86_64.tar.gz
 sudo tar xf cmake-3.18.4-Linux-x86_64.tar.gz -C /opt/cmake --strip-components=1
 rm -f cmake-3.18.4-Linux-x86_64.tar.gz
+
 sudo tee /etc/profile.d/cmake.sh >/dev/null <<'EOF'
 export PATH="/opt/cmake/bin:${PATH}"
 EOF
+
 sudo chmod 0755 /etc/profile.d/cmake.sh
 . /etc/profile.d/cmake.sh
 ```
@@ -119,11 +121,35 @@ sudo rm -rf /opt/node; sudo mkdir -p /opt/node
 wget https://nodejs.org/dist/v12.16.3/node-v12.16.3-linux-x64.tar.xz
 sudo tar xf node-v12.16.3-linux-x64.tar.xz -C /opt/node --strip-components=1
 rm -f node-v12.16.3-linux-x64.tar.xz
+
 sudo tee /etc/profile.d/node.sh >/dev/null <<'EOF'
 export PATH="/opt/node/bin:${PATH}"
 EOF
+
 sudo chmod 0755 /etc/profile.d/node.sh
 . /etc/profile.d/node.sh
+```
+
+Install [LLVM](https://llvm.org/).
+
+```sh
+sudo rm -rf /opt/llvm; sudo mkdir -p /opt/llvm
+wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
+sudo tar xf clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz -C /opt/llvm --strip-components=1
+rm -f clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
+
+sudo tee /etc/profile.d/llvm.sh >/dev/null <<'EOF'
+export PATH="/opt/llvm/bin:${PATH}"
+EOF
+
+sudo chmod 0755 /etc/profile.d/llvm.sh
+. /etc/profile.d/llvm.sh
+
+sudo tee /etc/ld.so.conf.d/llvm.conf >/dev/null <<'EOF'
+/opt/llvm/lib
+EOF
+
+sudo ldconfig
 ```
 
 </details>
