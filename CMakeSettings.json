@@ -1,16 +1,6 @@
 {
   "configurations": [
     {
-      "name": "Ace",
-      "generator": "Ninja",
-      "configurationType": "Ace",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
-      "buildRoot": "${projectDir}\\build\\vs\\ace",
-      "installRoot": "${projectDir}",
-      "variables": []
-    },
-    {
       "name": "Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
@@ -28,6 +18,26 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
       "buildRoot": "${projectDir}\\build\\vs\\release",
+      "installRoot": "${projectDir}",
+      "variables": []
+    },
+    {
+      "name": "MinSizeRel",
+      "generator": "Ninja",
+      "configurationType": "MinSizeRel",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
+      "buildRoot": "${projectDir}\\build\\vs\\minsizerel",
+      "installRoot": "${projectDir}",
+      "variables": []
+    },
+    {
+      "name": "RelWithDebInfo",
+      "generator": "Ninja",
+      "configurationType": "RelWithDebInfo",
+      "inheritEnvironments": [ "msvc_x64_x64" ],
+      "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
+      "buildRoot": "${projectDir}\\build\\vs\\relwithdebinfo",
       "installRoot": "${projectDir}",
       "variables": []
     }
