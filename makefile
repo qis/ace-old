@@ -5,7 +5,7 @@ all: \
   benchmark doctest \
   date fmt pugixml tbb \
   brotli bzip2 lzma zlib zstd \
-  jpeg png
+  jpeg png webp
 
 benchmark:
 	@$(MAKE) $(MFLAGS) install/target TARGET=benchmark
@@ -43,11 +43,11 @@ zstd:
 jpeg:
 	@$(MAKE) $(MFLAGS) install/target TARGET=jpeg
 
-webp:
-	@$(MAKE) $(MFLAGS) install/target TARGET=webp
-
-png:
+png: zlib
 	@$(MAKE) $(MFLAGS) install/target TARGET=png
+
+webp: jpeg png
+	@$(MAKE) $(MFLAGS) install/target TARGET=webp
 
 configure/target: \
   build/$(TARGET)/debug/rules.ninja \

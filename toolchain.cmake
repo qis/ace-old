@@ -141,7 +141,7 @@ list(APPEND __PORTS_LIBRARIES benchmark doctest fmt tz pugixml tbb)
 list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
 
 # Image Processing
-list(APPEND __PORTS_LIBRARIES jpeg png)
+list(APPEND __PORTS_LIBRARIES jpeg png webp)
 
 # Suffix
 set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d>")
@@ -166,12 +166,25 @@ endforeach()
 if(WIN32)
   set_property(TARGET ace::benchmark APPEND PROPERTY
     INTERFACE_LINK_LIBRARIES "shlwapi.lib")
+
+  set_property(TARGET ace::webp APPEND PROPERTY
+    INTERFACE_LINK_LIBRARIES "shlwapi.lib;windowscodecs.lib")
 else()
   set_property(TARGET ace::tbb APPEND PROPERTY
     INTERFACE_LINK_LIBRARIES "dl")
+
   set_property(TARGET ace::brotli APPEND PROPERTY
     INTERFACE_LINK_LIBRARIES "m")
+
+  set_property(TARGET ace::webp APPEND PROPERTY
+    INTERFACE_LINK_LIBRARIES "m")
 endif()
+
+set_property(TARGET ace::png APPEND PROPERTY
+  INTERFACE_LINK_LIBRARIES "ace::zlib")
+
+set_property(TARGET ace::webp APPEND PROPERTY
+  INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::png")
 
 # Cleanup
 unset(__PORTS_LIBRARY_SUFFIX)
