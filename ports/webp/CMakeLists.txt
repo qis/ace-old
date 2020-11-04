@@ -10,43 +10,64 @@ option(WEBP_NEAR_LOSSLESS "Enable near-lossless encoding" ON)
 option(WEBP_ENABLE_SWAP_16BIT_CSP "Enable byte swap for 16 bit colorspaces." OFF)
 
 # Checks
-set(WEBP_DEP_LIBRARIES)
-set(WEBP_DEP_INCLUDE_DIRS)
-set(WEBP_ENABLE_SIMD ON)
+include(CheckCSourceCompiles)
+check_c_source_compiles("
+    int main(void) {
+      (void)__builtin_bswap16(0);
+      return 0;
+    }
+  " HAVE_BUILTIN_BSWAP16)
+check_c_source_compiles("
+    int main(void) {
+      (void)__builtin_bswap32(0);
+      return 0;
+    }
+  " HAVE_BUILTIN_BSWAP32)
+check_c_source_compiles("
+    int main(void) {
+      (void)__builtin_bswap64(0);
+      return 0;
+    }
+  " HAVE_BUILTIN_BSWAP64)
+check_c_source_compiles("
+    #include <math.h>
+    int main(int argc, char** argv) {
+      return (int)pow(argc, 2.5);
+    }
+  " HAVE_MATH_LIBRARY)
 
-set(CMAKE_C_FLAGS_SRC ${CMAKE_C_FLAGS})
-set(CMAKE_CURRENT_SOURCE_DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR})
-set(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+include(CheckIncludeFiles)
+check_include_files("stdlib.h;stdarg.h;string.h;float.h" STDC_HEADERS)
+check_include_files(dlfcn.h HAVE_DLFCN_H)
+check_include_files(inttypes.h HAVE_INTTYPES_H)
+check_include_files(memory.h HAVE_MEMORY_H)
+check_include_files(shlwapi.h HAVE_SHLWAPI_H)
+check_include_files(stdint.h HAVE_STDINT_H)
+check_include_files(stdlib.h HAVE_STDLIB_H)
+check_include_files(strings.h HAVE_STRINGS_H)
+check_include_files(string.h HAVE_STRING_H)
+check_include_files(sys/stat.h HAVE_SYS_STAT_H)
+check_include_files(sys/types.h HAVE_SYS_TYPES_H)
+check_include_files(unistd.h HAVE_UNISTD_H)
+check_include_files(wincodec.h HAVE_WINCODEC_H)
+check_include_files(windows.h HAVE_WINDOWS_H)
 
-set(Threads_FOUND ON)
-set(OpenGL_FOUND OFF)
-set(JPEG_FOUND ON)
-set(PNG_FOUND ON)
-set(TIFF_FOUND OFF)
-set(GIF_FOUND OFF)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/deps.cmake)
-
-set(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR_SRC})
-set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS_SRC})
-unset(CMAKE_CURRENT_SOURCE_DIR_SRC)
-unset(CMAKE_C_FLAGS)
+set(PACKAGE "webp")
+set(PACKAGE_BUGREPORT "https://bugs.chromium.org/p/webp")
+set(PACKAGE_NAME "webp")
+set(PACKAGE_STRING "webp ${PROJECT_VERSION}")
+set(PACKAGE_TARNAME "webp")
+set(PACKAGE_URL "http://developers.google.com/speed/webp")
+set(PACKAGE_VERSION "${PROJECT_VERSION}")
+set(VERSION "${PROJECT_VERSION}")
 
 # Settings
 set(WEBP_HAVE_JPEG ON)
 set(WEBP_HAVE_PNG ON)
-set(WEBP_HAVE_GIF OFF)
-set(WEBP_HAVE_TIFF OFF)
-
 set(WEBP_HAVE_SSE2 ON)
 set(WEBP_HAVE_SSE41 ON)
-
-set(WEBP_HAVE_GL OFF)
-set(WEBP_HAVE_SDL OFF)
 set(WEBP_USE_THREAD ON)
-
-set(HAVE_GL_GLUT_H OFF)
-set(HAVE_GLUT_GLUT_H OFF)
-set(HAVE_OPENGL_GLUT_H OFF)
+set(WEBP_ENABLE_SIMD ON)
 
 # Configs
 configure_file(src/cmake/config.h.in
