@@ -1,4 +1,4 @@
-#include <benchmark.h>
+#include "benchmark/benchmark.h"
 #include <cstdio>
 
 static void version_sscanf(benchmark::State& state)

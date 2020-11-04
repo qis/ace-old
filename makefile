@@ -13,7 +13,7 @@ build/$(SYSTEM)/build.ninja: CMakeLists.txt
 	@cmake -G "Ninja Multi-Config" \
 	  -DCMAKE_CONFIGURATION_TYPES="Debug;Release;MinSizeRel;RelWithDebInfo" \
 	  -DCMAKE_TOOLCHAIN_FILE="$(PREFIX)/toolchain.cmake" \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)" \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/build/install" \
 	  -B build/$(SYSTEM)
 
 configure: build/$(SYSTEM)/build.ninja
