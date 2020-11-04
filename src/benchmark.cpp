@@ -1,43 +1,21 @@
-#include "benchmark.h"
-#include <application.hpp>
-#include <memory_resource>
-#include <cstdlib>
+#include "benchmark/benchmark.h"
+#include <application/random.hpp>
 
-static void value_string(benchmark::State& state)
+static void random(benchmark::State& state)
 {
-  application application;
-  for (auto _ : state) {
-    const auto value = application.value();
-    benchmark::DoNotOptimize(value);
+  for (auto _ : state)
+  {
+    const auto str = application::random();
+    benchmark::DoNotOptimize(str);
   }
 }
-BENCHMARK(value_string);
-
-static void value_it_string(benchmark::State& state)
-{
-  application application;
-  for (auto _ : state) {
-    const auto value = application.value(nullptr);
-    benchmark::DoNotOptimize(value);
-  }
-}
-BENCHMARK(value_it_string);
-
-static void value_pmr_string(benchmark::State& state)
-{
-  const std::pmr::polymorphic_allocator<char> allocator;
-  application application;
-  for (auto _ : state) {
-    const auto value = application.value(allocator);
-    benchmark::DoNotOptimize(value);
-  }
-}
-BENCHMARK(value_pmr_string);
+BENCHMARK(random);
 
 int main(int argc, char** argv)
 {
   benchmark::Initialize(&argc, argv);
-  if (benchmark::ReportUnrecognizedArguments(argc, argv)) {
+  if (benchmark::ReportUnrecognizedArguments(argc, argv))
+  {
     return EXIT_FAILURE;
   }
   benchmark::RunSpecifiedBenchmarks();

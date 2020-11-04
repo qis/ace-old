@@ -8,7 +8,7 @@
       "addressSanitizerRuntimeFlags": "detect_leaks=0",
       "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
       "buildRoot": "${projectDir}\\build\\vs\\debug",
-      "installRoot": "${projectDir}",
+      "installRoot": "${projectDir}\\build\\install",
       "variables": []
     },
     {
@@ -18,7 +18,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
       "buildRoot": "${projectDir}\\build\\vs\\release",
-      "installRoot": "${projectDir}",
+      "installRoot": "${projectDir}\\build\\install",
       "variables": []
     },
     {
@@ -28,7 +28,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
       "buildRoot": "${projectDir}\\build\\vs\\minsizerel",
-      "installRoot": "${projectDir}",
+      "installRoot": "${projectDir}\\build\\install",
       "variables": []
     },
     {
@@ -38,7 +38,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "cmakeToolchain": "C:\\Ace\\toolchain.cmake",
       "buildRoot": "${projectDir}\\build\\vs\\relwithdebinfo",
-      "installRoot": "${projectDir}",
+      "installRoot": "${projectDir}\\build\\install",
       "variables": []
     }
   ]

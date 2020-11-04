@@ -17,10 +17,10 @@ BEGIN
   BEGIN
     BLOCK "0000FDE9"
     BEGIN
+      VALUE "FileDescription",  PROJECT_NAME
       VALUE "ProductName",      PROJECT_DESCRIPTION
       VALUE "ProductVersion",   PROJECT_VERSION
       VALUE "LegalCopyright",   PROJECT_VENDOR
-      VALUE "FileDescription",  PROJECT_NAME
     END
   END
   BLOCK "VarFileInfo"

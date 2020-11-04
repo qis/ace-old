@@ -14,15 +14,15 @@ build/$(SYSTEM)/build.ninja: CMakeLists.txt
 	@cmake -G "Ninja Multi-Config" \
 	  -DCMAKE_CONFIGURATION_TYPES="Debug;Release;MinSizeRel;RelWithDebInfo" \
 	  -DCMAKE_TOOLCHAIN_FILE="$(PREFIX)/toolchain.cmake" \
-	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)" \
+	  -DCMAKE_INSTALL_PREFIX="$(CURDIR)/build/install" \
 	  -B build/$(SYSTEM)
 
 configure: build/$(SYSTEM)/build.ninja
 
 # Run
 run: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja $(TARGET)
-	@cmake -E chdir build/$(SYSTEM)/Debug ./$(TARGET)
+	@ninja -v -C build/$(SYSTEM) -f build-Release.ninja
+	@cmake -E chdir build/$(SYSTEM)/Release ./$(TARGET)
 
 # Test
 test: configure
@@ -45,6 +45,10 @@ benchmark: configure
 # Install
 install: configure
 	@ninja -C build/$(SYSTEM) -f build-Release.ninja install
+
+# Package
+package: configure
+	@ninja -C build/$(SYSTEM) -f build-Release.ninja package
 
 # Format
 format:
