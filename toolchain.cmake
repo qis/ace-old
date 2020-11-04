@@ -80,9 +80,9 @@ else()
   # Toolset
   set(CMAKE_C_COMPILER "gcc-10" CACHE STRING "")
   set(CMAKE_CXX_COMPILER "g++-10" CACHE STRING "")
-  set(CMAKE_RANLIB "ranlib" CACHE STRING "")
-  set(CMAKE_AR "ar" CACHE STRING "")
-  set(CMAKE_NM "nm" CACHE STRING "")
+  set(CMAKE_RANLIB "gcc-ranlib-10" CACHE STRING "")
+  set(CMAKE_AR "gcc-ar-10" CACHE STRING "")
+  set(CMAKE_NM "gcc-nm-10" CACHE STRING "")
 
   # WARN Flags
   set(WARN_FLAGS "-Wall -Wextra -Wpedantic")
