@@ -20,7 +20,7 @@ configure: build/$(SYSTEM)/build.ninja
 
 # Run
 run: configure
-	@ninja -v -C build/$(SYSTEM) -f build-Debug.ninja
+	@ninja -C build/$(SYSTEM) -f build-Debug.ninja
 	@cmake -P $(PREFIX)/run.cmake build/$(SYSTEM) Debug main
 
 # Test
