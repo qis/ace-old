@@ -5,7 +5,7 @@
  #define LZMA_H
  
 +// ports config begin
-+#ifdef NDEBUG
++#ifndef ACE_SHARED
 +#  define LZMA_API_STATIC
 +#endif
 +// ports config end

@@ -5,7 +5,7 @@
  #define BROTLI_COMMON_PORT_H_
  
 +// ports config begin
-+#ifndef NDEBUG
++#ifdef ACE_SHARED
 +#define BROTLI_SHARED_COMPILATION
 +#endif
 +// ports config end

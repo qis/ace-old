@@ -5,7 +5,7 @@
  #define ZCONF_H
  
 +// ports config begin
-+#ifndef NDEBUG
++#ifdef ACE_SHARED
 +#  define ZLIB_DLL
 +#endif
 +

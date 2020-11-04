@@ -5,7 +5,7 @@
  #define _BZLIB_H
  
 +// ports config begin
-+#ifndef NDEBUG
++#ifdef ACE_SHARED
 +#  ifdef _WIN32
 +#    ifdef BZ_BUILD
 +#      define BZ_EXTERN __declspec(dllexport)

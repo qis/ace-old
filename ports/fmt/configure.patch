@@ -5,7 +5,7 @@
  #include <vector>
  
 +// ports config begin
-+#ifndef NDEBUG
++#ifdef ACE_SHARED
 +#define FMT_SHARED 1
 +#endif
 +

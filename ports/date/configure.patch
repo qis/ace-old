@@ -18,7 +18,7 @@
  // Technically any OS may use the mapping process but currently only Windows does use it.
  
 +// ports config begin
-+#ifndef NDEBUG
++#ifdef ACE_SHARED
 +#define DATE_USE_DLL 1
 +#endif
 +
