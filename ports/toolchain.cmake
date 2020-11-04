@@ -26,6 +26,9 @@ else()
   endif()
 endif()
 
+# Generated Header Include Directories
+include_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/lib/include)
+
 if(NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
   set(SKIP_INSTALL_HEADERS ON CACHE STRING "")
 endif()

@@ -115,6 +115,9 @@ else()
     ${CMAKE_INSTALL_PREFIX}/include/jconfig.h)
 endif()
 
+configure_file(src/jconfigint.h.in
+  ${CMAKE_INSTALL_PREFIX}/lib/include/jconfigint.h)
+
 # Headers
 set(headers
   ${CMAKE_CURRENT_SOURCE_DIR}/src/turbojpeg.h
@@ -123,10 +126,6 @@ set(headers
   ${CMAKE_CURRENT_SOURCE_DIR}/src/jerror.h)
 
 # Sources
-configure_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/jconfigint.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/src/jconfigint.h)
-
 set(sources
   # JPEG
   src/jcapimin.c
@@ -229,7 +228,7 @@ set(sources
 
   # Configs
   ${CMAKE_INSTALL_PREFIX}/include/jconfig.h
-  ${CMAKE_CURRENT_BINARY_DIR}/src/jconfigint.h)
+  ${CMAKE_INSTALL_PREFIX}/lib/include/jconfigint.h)
 
 set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -D__x86_64__")
 
@@ -248,7 +247,7 @@ set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -I\"${CMAKE_CURRENT_SOURCE_DIR
 
 # Library
 add_library(jpeg ${headers} ${sources})
-target_include_directories(jpeg BEFORE PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/src src)
+target_include_directories(jpeg BEFORE PUBLIC src)
 target_compile_definitions(jpeg PRIVATE BMP_SUPPORTED GIF_SUPPORTED PPM_SUPPORTED TARGA_SUPPORTED)
 
 if(WIN32)
@@ -263,6 +262,8 @@ endif()
 
 if(MSVC)
   target_compile_options(jpeg PRIVATE $<$<COMPILE_LANGUAGE:C>:/wd4996>)
+else()
+  target_compile_options(jpeg PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-sign-compare -Wno-clobbered>)
 endif()
 
 # Install
