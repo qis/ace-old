@@ -1,7 +1,7 @@
 MFLAGS = --no-print-directory
 TARGET =
 
-all: benchmark doctest date fmt pugixml tbb brotli bzip2 lzma zlib zstd
+all: benchmark doctest date fmt pugixml tbb brotli bzip2 lzma zlib zstd jpeg
 
 benchmark:
 	@$(MAKE) $(MFLAGS) install/target TARGET=benchmark
@@ -35,6 +35,9 @@ zlib:
 
 zstd:
 	@$(MAKE) $(MFLAGS) install/target TARGET=zstd
+
+jpeg:
+	@$(MAKE) $(MFLAGS) install/target TARGET=jpeg
 
 configure/target: \
   build/$(TARGET)/debug/rules.ninja \

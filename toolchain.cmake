@@ -140,6 +140,9 @@ list(APPEND __PORTS_LIBRARIES benchmark doctest fmt tz pugixml tbb)
 # Compression
 list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
 
+# Image Processing
+list(APPEND __PORTS_LIBRARIES jpeg)
+
 # Suffix
 set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d>")
 string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r>")
