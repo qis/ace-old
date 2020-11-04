@@ -22,7 +22,7 @@ set(sources
 
 # Library
 add_library(bzip2 ${headers} ${sources})
-target_include_directories(bzip2 PUBLIC src)
+target_include_directories(bzip2 PRIVATE src)
 
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(bzip2 PRIVATE BZ_BUILD)

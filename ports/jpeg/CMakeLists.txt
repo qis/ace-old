@@ -247,7 +247,7 @@ set(CMAKE_ASM_NASM_FLAGS "${CMAKE_ASM_NASM_FLAGS} -I\"${CMAKE_CURRENT_SOURCE_DIR
 
 # Library
 add_library(jpeg ${headers} ${sources})
-target_include_directories(jpeg PUBLIC src)
+target_include_directories(jpeg PRIVATE src)
 target_compile_definitions(jpeg PRIVATE BMP_SUPPORTED GIF_SUPPORTED PPM_SUPPORTED TARGA_SUPPORTED)
 
 if(WIN32)

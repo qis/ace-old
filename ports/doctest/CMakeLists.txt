@@ -13,7 +13,7 @@ set(sources src/doctest/parts/doctest.cpp)
 
 # Library
 add_library(doctest SHARED ${headers} ${sources})
-target_include_directories(doctest PUBLIC src/doctest)
+target_include_directories(doctest PRIVATE src/doctest)
 
 target_compile_definitions(doctest
   PRIVATE

@@ -34,7 +34,7 @@ set(sources
 
 # Library
 add_library(zlib ${headers} ${sources})
-target_include_directories(zlib PUBLIC src)
+target_include_directories(zlib PRIVATE src)
 
 if(WIN32)
   target_compile_definitions(zlib PRIVATE _CRT_SECURE_NO_DEPRECATE _CRT_NONSTDC_NO_DEPRECATE)

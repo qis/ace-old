@@ -17,7 +17,7 @@ file(GLOB_RECURSE sources
 
 # Library
 add_library(brotli ${sources})
-target_include_directories(brotli PUBLIC src/c/include)
+target_include_directories(brotli PRIVATE src/c/include)
 target_compile_definitions(brotli PRIVATE BROTLI_HAVE_LOG2=1)
 
 if(BUILD_SHARED_LIBS)
