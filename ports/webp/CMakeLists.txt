@@ -17,7 +17,15 @@ set(WEBP_ENABLE_SIMD ON)
 set(CMAKE_C_FLAGS_SRC ${CMAKE_C_FLAGS})
 set(CMAKE_CURRENT_SOURCE_DIR_SRC ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+
+set(Threads_FOUND ON)
+set(OpenGL_FOUND OFF)
+set(JPEG_FOUND ON)
+set(PNG_FOUND ON)
+set(TIFF_FOUND OFF)
+set(GIF_FOUND OFF)
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/deps.cmake)
+
 set(CMAKE_CURRENT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR_SRC})
 set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS_SRC})
 unset(CMAKE_CURRENT_SOURCE_DIR_SRC)
@@ -48,7 +56,8 @@ configure_file(src/cmake/config.h.in
 file(GLOB headers src/src/webp/*.h)
 
 # Sources
-set(sources ${CMAKE_INSTALL_PREFIX}/lib/include/webp/config.h)
+set(sources
+  ${CMAKE_INSTALL_PREFIX}/lib/include/src/webp/config.h)
 
 function(parse_makefile_am FOLDER SRC_REGEX)
   file(READ ${FOLDER}/Makefile.am MAKEFILE_AM)
