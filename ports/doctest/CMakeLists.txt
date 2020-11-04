@@ -30,5 +30,5 @@ if(WIN32 AND BUILD_SHARED_LIBS)
 endif()
 
 if(NOT SKIP_INSTALL_HEADERS)
-  install(FILES ${headers} DESTINATION include)
+  install(FILES ${headers} DESTINATION include/doctest)
 endif()
