@@ -27,7 +27,7 @@ if(WIN32)
   set(MSVC_DEFINES "${MSVC_DEFINES} /D_CRT_SECURE_NO_WARNINGS")
 
   # MSVC Flags
-  set(MSVC_FLAGS "/WX /W3 /wd4101 /wd26812 /wd28251 /wd4275")
+  set(MSVC_FLAGS "/W3 /wd4101 /wd4275 /wd26812 /wd28251")
   set(MSVC_FLAGS "${MSVC_FLAGS} /diagnostics:column /FC")
   set(MSVC_FLAGS "${MSVC_FLAGS} ${MSVC_DEFINES} /utf-8")
 
@@ -79,13 +79,12 @@ else()
   # Toolset
   set(CMAKE_C_COMPILER "gcc-10" CACHE STRING "")
   set(CMAKE_CXX_COMPILER "g++-10" CACHE STRING "")
-  set(CMAKE_RANLIB "gcc-ranlib-10" CACHE STRING "")
-  set(CMAKE_AR "gcc-ar-10" CACHE STRING "")
-  set(CMAKE_NM "gcc-nm-10" CACHE STRING "")
+  set(CMAKE_RANLIB "ranlib" CACHE STRING "")
+  set(CMAKE_AR "ar" CACHE STRING "")
+  set(CMAKE_NM "nm" CACHE STRING "")
 
   # WARN Flags
-  set(WARN_FLAGS "-Werror -Wall -Wextra -Wpedantic")
-  set(WARN_FLAGS "${WARN_FLAGS} -Wno-deprecated-declarations")
+  set(WARN_FLAGS "-Wall -Wextra -Wpedantic")
   set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-parameter")
   set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-variable")
 
