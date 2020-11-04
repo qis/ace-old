@@ -41,7 +41,7 @@ list(APPEND sources
 
 # Library
 add_library(tbb ${sources})
-target_include_directories(tbb BEFORE PUBLIC src/include)
+target_include_directories(tbb PUBLIC src/include)
 target_compile_definitions(tbb PRIVATE __TBB_BUILD __TBB_USE_ITT_NOTIFY)
 
 if(WIN32)

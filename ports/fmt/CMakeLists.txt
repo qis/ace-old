@@ -13,7 +13,7 @@ file(GLOB sources src/src/*.cc)
 
 # Library
 add_library(fmt ${headers} ${sources})
-target_include_directories(fmt BEFORE PUBLIC src/include)
+target_include_directories(fmt PUBLIC src/include)
 
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(fmt PRIVATE FMT_EXPORT)

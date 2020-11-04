@@ -15,7 +15,7 @@ file(GLOB sources
 
 # Shared
 add_library(pugixml ${headers} ${sources})
-target_include_directories(pugixml BEFORE PUBLIC src/src)
+target_include_directories(pugixml PUBLIC src/src)
 
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(pugixml PRIVATE PUGIXML_EXPORT)

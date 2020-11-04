@@ -153,7 +153,7 @@ set(sources
 
 # Library
 add_library(lzma ${headers} ${sources})
-target_include_directories(lzma BEFORE PUBLIC
+target_include_directories(lzma PUBLIC
   include
   src/src/liblzma/common
   src/src/common

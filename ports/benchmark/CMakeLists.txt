@@ -19,7 +19,7 @@ endforeach()
 
 # Library
 add_library(benchmark STATIC ${headers} ${sources})
-target_include_directories(benchmark BEFORE PUBLIC src/include)
+target_include_directories(benchmark PUBLIC src/include)
 
 if(WIN32)
   target_link_libraries(benchmark PRIVATE shlwapi)

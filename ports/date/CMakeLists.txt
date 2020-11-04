@@ -17,7 +17,7 @@ set(sources src/src/tz.cpp)
 
 # Shared
 add_library(tz ${headers} ${sources})
-target_include_directories(tz BEFORE PUBLIC src/include)
+target_include_directories(tz PUBLIC src/include)
 
 if(BUILD_SHARED_LIBS)
   target_compile_definitions(tz PRIVATE DATE_BUILD_DLL)

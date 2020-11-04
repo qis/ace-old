@@ -23,7 +23,7 @@ file(GLOB sources
 
 # Library
 add_library(zstd ${headers} ${sources})
-target_include_directories(zstd BEFORE PUBLIC src/lib src/lib/common)
+target_include_directories(zstd PUBLIC src/lib src/lib/common)
 target_compile_definitions(zstd PRIVATE ZSTD_MULTITHREAD ZSTD_HEAPMODE=0)
 
 if(WIN32 AND BUILD_SHARED_LIBS)
