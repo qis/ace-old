@@ -1,6 +1,5 @@
 SYSTEM = linux
 PREFIX = /opt/ace
-TARGET = application
 
 # Build
 all: configure
@@ -21,8 +20,8 @@ configure: build/$(SYSTEM)/build.ninja
 
 # Run
 run: configure
-	@ninja -v -C build/$(SYSTEM) -f build-Release.ninja
-	@cmake -E chdir build/$(SYSTEM)/Release ./$(TARGET)
+	@ninja -v -C build/$(SYSTEM) -f build-Debug.ninja
+	@cmake -P $(PREFIX)/run.cmake build/$(SYSTEM) Debug main
 
 # Test
 test: configure
