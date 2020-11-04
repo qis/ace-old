@@ -104,10 +104,10 @@ else()
 
   # Linker Flags
   foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
-    set(CMAKE_${LINKER}_FLAGS "-L${CMAKE_CURRENT_LIST_DIR}/lib -Wl,--as-needed" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS "-L${CMAKE_CURRENT_LIST_DIR}/lib" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_DEBUG "" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -flto" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_MINSIZEREL "-Wl,-s -flto" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -Wl,--as-needed -flto" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_MINSIZEREL "-Wl,-s -Wl,--as-needed -flto" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_RELWITHDEBINFO "" CACHE STRING "")
   endforeach()
 
