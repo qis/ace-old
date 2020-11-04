@@ -1,10 +1,9 @@
 --- i/bzlib.h
 +++ w/bzlib.h
-@@ -22,6 +22,26 @@
+@@ -22,6 +22,24 @@
  #ifndef _BZLIB_H
  #define _BZLIB_H
  
-+// ports config begin
 +#ifdef ACE_SHARED
 +#  ifdef _WIN32
 +#    ifdef BZ_BUILD
@@ -22,7 +21,6 @@
 +#else
 +#  define BZ_EXTERN
 +#endif
-+// ports config end
 +
  #ifdef __cplusplus
  extern "C" {

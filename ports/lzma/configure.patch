@@ -1,14 +1,12 @@
 --- i/src/liblzma/api/lzma.h
 +++ w/src/liblzma/api/lzma.h
-@@ -30,6 +30,12 @@
+@@ -30,6 +30,10 @@
  #ifndef LZMA_H
  #define LZMA_H
  
-+// ports config begin
 +#ifndef ACE_SHARED
 +#  define LZMA_API_STATIC
 +#endif
-+// ports config end
 +
  /*****************************
   * Required standard headers *

@@ -1,14 +1,12 @@
 --- i/c/include/brotli/port.h
 +++ w/c/include/brotli/port.h
-@@ -9,6 +9,12 @@
+@@ -9,6 +9,10 @@
  #ifndef BROTLI_COMMON_PORT_H_
  #define BROTLI_COMMON_PORT_H_
  
-+// ports config begin
 +#ifdef ACE_SHARED
 +#define BROTLI_SHARED_COMPILATION
 +#endif
-+// ports config end
 +
  /* The following macros were borrowed from https://github.com/nemequ/hedley
   * with permission of original author - Evan Nemerson <evan@nemerson.com> */

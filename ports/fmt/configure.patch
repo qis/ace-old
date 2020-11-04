@@ -1,16 +1,14 @@
 --- i/include/fmt/core.h
 +++ w/include/fmt/core.h
-@@ -17,6 +17,14 @@
+@@ -17,6 +17,12 @@
  #include <type_traits>
  #include <vector>
  
-+// ports config begin
 +#ifdef ACE_SHARED
 +#define FMT_SHARED 1
 +#endif
 +
 +#define FMT_STATIC_THOUSANDS_SEPARATOR 1
-+// ports config end
 +
  // The fmt library version in the form major * 10000 + minor * 100 + patch.
  #define FMT_VERSION 70100

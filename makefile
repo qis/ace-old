@@ -1,7 +1,11 @@
 MFLAGS = --no-print-directory
 TARGET =
 
-all: benchmark doctest date fmt pugixml tbb brotli bzip2 lzma zlib zstd jpeg
+all: \
+  benchmark doctest \
+  date fmt pugixml tbb \
+  brotli bzip2 lzma zlib zstd \
+  jpeg png
 
 benchmark:
 	@$(MAKE) $(MFLAGS) install/target TARGET=benchmark
@@ -38,6 +42,9 @@ zstd:
 
 jpeg:
 	@$(MAKE) $(MFLAGS) install/target TARGET=jpeg
+
+png:
+	@$(MAKE) $(MFLAGS) install/target TARGET=png
 
 configure/target: \
   build/$(TARGET)/debug/rules.ninja \
@@ -103,7 +110,9 @@ delete: reset
 	@cmake -E remove_directory ports/date/src
 	@cmake -E remove_directory ports/doctest/src
 	@cmake -E remove_directory ports/fmt/src
+	@cmake -E remove_directory ports/jpeg/src
 	@cmake -E remove_directory ports/lzma/src
+	@cmake -E remove_directory ports/png/src
 	@cmake -E remove_directory ports/pugixml/src
 	@cmake -E remove_directory ports/tbb/src
 	@cmake -E remove_directory ports/zlib/src

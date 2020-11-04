@@ -141,7 +141,7 @@ list(APPEND __PORTS_LIBRARIES benchmark doctest fmt tz pugixml tbb)
 list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
 
 # Image Processing
-list(APPEND __PORTS_LIBRARIES jpeg)
+list(APPEND __PORTS_LIBRARIES jpeg png)
 
 # Suffix
 set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d>")

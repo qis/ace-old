@@ -1,14 +1,12 @@
 --- i/lib/zstd.h
 +++ w/lib/zstd.h
-@@ -14,6 +14,12 @@ extern "C" {
+@@ -14,6 +14,10 @@ extern "C" {
  #ifndef ZSTD_H_235446
  #define ZSTD_H_235446
  
-+// ports config begin
 +#if defined(ACE_SHARED) && defined(_WIN32)
 +#  define ZSTD_DLL_IMPORT 1
 +#endif
-+// ports config end
 +
  /* ======   Dependency   ======*/
  #include <limits.h>   /* INT_MAX */
