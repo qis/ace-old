@@ -1,5 +1,3 @@
-diff --git i/pngconf.h w/pngconf.h
-index 927a769..b3c68cf 100644
 --- i/pngconf.h
 +++ w/pngconf.h
 @@ -21,6 +21,10 @@

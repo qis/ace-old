@@ -43,10 +43,10 @@ zstd:
 jpeg:
 	@$(MAKE) $(MFLAGS) install/target TARGET=jpeg
 
-png: zlib
+png:
 	@$(MAKE) $(MFLAGS) install/target TARGET=png
 
-webp: jpeg png
+webp:
 	@$(MAKE) $(MFLAGS) install/target TARGET=webp
 
 configure/target: \

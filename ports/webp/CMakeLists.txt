@@ -3,7 +3,7 @@ project(webp VERSION 1.1.0 LANGUAGES C)
 
 set(URL "https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-${PROJECT_VERSION}.tar.gz")
 set(SHA "98a052268cc4d5ece27f76572a7f50293f439c17a98e67c4ea0c7ed6f50ef043")
-download_source(${URL} ${SHA} src)
+download_source(${URL} ${SHA} src configure.patch)
 
 # Options
 option(WEBP_NEAR_LOSSLESS "Enable near-lossless encoding" ON)

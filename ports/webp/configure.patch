@@ -1,20 +1,17 @@
---- i/zconf.h
-+++ w/zconf.h
-@@ -8,6 +8,17 @@
- #ifndef ZCONF_H
- #define ZCONF_H
+--- i/src/webp/types.h
++++ w/src/webp/types.h
+@@ -14,6 +14,14 @@
+ #ifndef WEBP_WEBP_TYPES_H_
+ #define WEBP_WEBP_TYPES_H_
  
-+#ifdef ACE_SHARED
-+#  define ZLIB_DLL
++#if defined(_WIN32) && defined(ACE_SHARED)
++#  ifdef WEBP_EXPORT
++#    define WEBP_EXTERN __declspec(dllexport)
++#  else
++#    define WEBP_EXTERN __declspec(dllimport)
++#  endif
 +#endif
 +
-+#ifndef _WIN32
-+#  define Z_HAVE_UNISTD_H
-+#  define Z_HAVE_STDARG_H
-+#endif
-+
-+#define Z_SOLO
-+
- /*
-  * If you *really* need a unique prefix for all types and library functions,
-  * compile with -DZ_PREFIX. The "standard" zlib should be compiled without it.
+ #include <stddef.h>  // for size_t
+ 
+ #ifndef _MSC_VER
