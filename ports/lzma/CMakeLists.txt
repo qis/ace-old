@@ -153,6 +153,7 @@ set(sources
 
 # Library
 add_library(lzma ${headers} ${sources})
+target_compile_definitions(lzma PRIVATE HAVE_CONFIG_H)
 target_include_directories(lzma PRIVATE
   include
   src/src/liblzma/common
@@ -165,7 +166,9 @@ target_include_directories(lzma PRIVATE
   src/src/liblzma/rangecoder
   src/src/liblzma/simple)
 
-target_compile_definitions(lzma PRIVATE HAVE_CONFIG_H DLL_EXPORT)
+if(WIN32 AND BUILD_SHARED_LIBS)
+  target_compile_definitions(lzma PRIVATE DLL_EXPORT)
+endif()
 
 if(MSVC)
   target_compile_options(lzma PRIVATE /wd4005 /wd4244 /wd4267 /wd4996 /wd5105)

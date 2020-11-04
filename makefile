@@ -43,6 +43,9 @@ zstd:
 jpeg:
 	@$(MAKE) $(MFLAGS) install/target TARGET=jpeg
 
+webp:
+	@$(MAKE) $(MFLAGS) install/target TARGET=webp
+
 png:
 	@$(MAKE) $(MFLAGS) install/target TARGET=png
 
@@ -115,5 +118,6 @@ delete: reset
 	@cmake -E remove_directory ports/png/src
 	@cmake -E remove_directory ports/pugixml/src
 	@cmake -E remove_directory ports/tbb/src
+	@cmake -E remove_directory ports/webp/src
 	@cmake -E remove_directory ports/zlib/src
 	@cmake -E remove_directory ports/zstd/src
