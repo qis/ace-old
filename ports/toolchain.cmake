@@ -1,6 +1,7 @@
 # Toolchain
 include_guard(GLOBAL)
-include("${CMAKE_CURRENT_LIST_DIR}/../toolchain.cmake")
+get_filename_component(ACE_ROOT "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
+include("${ACE_ROOT}/toolchain.cmake")
 
 set(CMAKE_DEBUG_POSTFIX "d" CACHE STRING "")
 set(CMAKE_RELEASE_POSTFIX "r" CACHE STRING "")
@@ -27,7 +28,7 @@ else()
 endif()
 
 # Generated Header Include Directories
-include_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/lib/include)
+include_directories(BEFORE ${ACE_ROOT}/lib/include)
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
   set(SKIP_INSTALL_HEADERS ON CACHE STRING "")
