@@ -3,10 +3,10 @@ PREFIX = /opt/ace
 
 # Build
 all: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja
-	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja
-	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Debug.ninja
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-MinSizeRel.ninja
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-RelWithDebInfo.ninja
 
 # Configure
 build/$(SYSTEM)/build.ninja: CMakeLists.txt
@@ -20,34 +20,34 @@ configure: build/$(SYSTEM)/build.ninja
 
 # Run
 run: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja main
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Debug.ninja main
 	@cmake -E chdir build/$(SYSTEM)/Debug ./application
 
 # Test
 test: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Debug.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/Debug ./tests
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/Release ./tests
-	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-MinSizeRel.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./tests
-	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-RelWithDebInfo.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/RelWithDebInfo ./tests
 
 # Benchmark
 benchmark: configure
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/Release ./benchmarks
-	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-MinSizeRel.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./benchmarks
 
 # Install
 install: configure
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja install
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja install
 
 # Package
 package: configure
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja package
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja package
 
 # Format
 format:
