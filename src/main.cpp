@@ -3,10 +3,10 @@
 #include <stdexcept>
 #include <thread>
 
-auto switch_to_new_thread(std::jthread& thread)
+auto switch_to_new_thread(std::thread& thread)
 {
   struct awaitable {
-    std::jthread* thread_;
+    std::thread* thread_;
 
     bool await_ready()
     {
@@ -20,11 +20,11 @@ auto switch_to_new_thread(std::jthread& thread)
         throw std::runtime_error("output jthread parameter not empty");
       }
 
-      thread = std::jthread([handle] {
+      thread = std::thread([handle] {
         handle.resume();
       });
 
-      fmt::print("coro: {}\n", thread.get_id());  // this is OK
+      fmt::print("coro: {}\n", thread.get_id());
     }
 
     void await_resume() {}
@@ -55,7 +55,7 @@ struct task {
   };
 };
 
-task resuming_on_new_thread(std::jthread& out) noexcept
+task resuming_on_new_thread(std::thread& out) noexcept
 {
   fmt::print("0001: {}\n", std::this_thread::get_id());
   co_await switch_to_new_thread(out);
@@ -64,7 +64,8 @@ task resuming_on_new_thread(std::jthread& out) noexcept
 
 int main(int argc, char* argv[])
 {
-  std::jthread out;
+  std::thread thread;
   fmt::print("main: {}\n", std::this_thread::get_id());
-  resuming_on_new_thread(out);
+  resuming_on_new_thread(thread);
+  thread.join();
 }
