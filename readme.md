@@ -40,6 +40,14 @@ Install [LLVM](https://github.com/llvm/llvm-project/releases/download/llvmorg-11
 Install Options
 ◉ Add LLVM to the system PATN for all users
 ```
+
+Install [NASM](https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/nasm-2.15.05-installer-x64.exe)
+
+```
+☐ RDOFF
+☐ Manual
+☐ VS8 integration
+```
   
 Install [Visual Studio Preview](https://visualstudio.microsoft.com/vs/preview/).
 
@@ -72,6 +80,7 @@ Add the following directories to the `Path` system environment variable.
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\Ninja
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Preview\Msbuild\Microsoft\VisualStudio\NodeJs
+C:\Program Files\NASM
 ```
 
 Set the `VSCMD_SKIP_SENDTELEMETRY` system environment variable to `1`.

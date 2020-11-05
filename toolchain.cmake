@@ -19,7 +19,8 @@ if(WIN32)
   set(CMAKE_AR "lib.exe" CACHE STRING "")
 
   # Runtime Library
-  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:RelWithDebInfo>:DLL>$<$<CONFIG:Debug>:DebugDLL>" CACHE STRING "")
+  set(CMAKE_MSVC_RUNTIME_LIBRARY
+    "MultiThreaded$<$<CONFIG:RelWithDebInfo>:DLL>$<$<CONFIG:Debug>:DebugDLL>" CACHE STRING "")
 
   # MSVC Defines
   set(MSVC_DEFINES "/DWIN32 /D_WINDOWS /DWINVER=0x0A00 /D_WIN32_WINNT=0x0A00")
@@ -57,8 +58,10 @@ if(WIN32)
   set(CMAKE_CL_NOLOGO "/nologo" CACHE STRING "")
 
   # Standard Libraries
-  set(CMAKE_C_STANDARD_LIBRARIES "kernel32.lib user32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib" CACHE STRING "")
-  set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES}" CACHE STRING "")
+  set(CMAKE_C_STANDARD_LIBRARIES
+    "kernel32.lib user32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib" CACHE STRING "")
+  set(CMAKE_CXX_STANDARD_LIBRARIES
+    "${CMAKE_C_STANDARD_LIBRARIES}" CACHE STRING "")
 
   # Assembler Flags
   set(CMAKE_ASM_MASM_FLAGS_INIT "/nologo")
@@ -126,70 +129,57 @@ include_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/include)
 
 # Library Prefix
 if(WIN32)
-  set(ACE_LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/")
+  set(__LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/")
 else()
-  set(ACE_LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/lib")
+  set(__LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/lib")
 endif()
-mark_as_advanced(ACE_LIBRARY_PREFIX)
 
 # Library Suffix
 if(WIN32)
-  set(ACE_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.lib>")
-  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.lib>")
-  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.lib>")
-  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.lib>")
+  set(__LIBRARY_SUFFIX_DEBUG "d.lib")
+  set(__LIBRARY_SUFFIX_RELEASE "r.lib")
+  set(__LIBRARY_SUFFIX_MINSIZEREL "m.lib")
+  set(__LIBRARY_SUFFIX_RELWITHDEBINFO "i.lib")
 else()
-  set(ACE_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.so>")
-  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.a>")
-  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
-  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
+  set(__LIBRARY_SUFFIX_DEBUG "d.so")
+  set(__LIBRARY_SUFFIX_RELEASE "r.a")
+  set(__LIBRARY_SUFFIX_MINSIZEREL "m.a")
+  set(__LIBRARY_SUFFIX_RELWITHDEBINFO "i.so")
 endif()
-mark_as_advanced(ACE_LIBRARY_SUFFIX)
-
-if(WIN32)
-  set(ACE_BENCHMARK_SUFFIX ${ACE_LIBRARY_SUFFIX})
-else()
-  set(ACE_BENCHMARK_SUFFIX "$<$<CONFIG:Debug>:d.a>")
-  string(APPEND ACE_BENCHMARK_SUFFIX "$<$<CONFIG:Release>:r.a>")
-  string(APPEND ACE_BENCHMARK_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
-  string(APPEND ACE_BENCHMARK_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.a>")
-endif()
-mark_as_advanced(ACE_BENCHMARK_SUFFIX)
-
-if(WIN32)
-  set(ACE_DOCTEST_SUFFIX ${ACE_LIBRARY_SUFFIX})
-else()
-  set(ACE_DOCTEST_SUFFIX "$<$<CONFIG:Debug>:d.so>")
-  string(APPEND ACE_DOCTEST_SUFFIX "$<$<CONFIG:Release>:r.so>")
-  string(APPEND ACE_DOCTEST_SUFFIX "$<$<CONFIG:MinSizeRel>:m.so>")
-  string(APPEND ACE_DOCTEST_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
-endif()
-mark_as_advanced(ACE_DOCTEST_SUFFIX)
 
 # Libraries
-set(ACE_LIBRARIES)
-list(APPEND ACE_LIBRARIES fmt tz pugixml tbb)
-list(APPEND ACE_LIBRARIES brotli bzip2 lzma zlib zstd)
-list(APPEND ACE_LIBRARIES jpeg png webp tiff)
-mark_as_advanced(ACE_LIBRARIES)
-
-if(NOT TARGET ace::benchmark)
-  add_library(ace::benchmark INTERFACE IMPORTED)
-  set_target_properties(ace::benchmark PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${ACE_LIBRARY_PREFIX}benchmark${ACE_BENCHMARK_SUFFIX}")
-endif()
+set(__LIBRARIES)
+list(APPEND __LIBRARIES benchmark fmt tz pugixml tbb)
+list(APPEND __LIBRARIES brotli bzip2 lzma zlib zstd)
+list(APPEND __LIBRARIES jpeg png webp tiff)
 
 if(NOT TARGET ace::doctest)
-  add_library(ace::doctest INTERFACE IMPORTED)
-  set_target_properties(ace::doctest PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${ACE_LIBRARY_PREFIX}doctest${ACE_DOCTEST_SUFFIX}")
+  if(WIN32)
+    list(APPEND __LIBRARIES doctest)
+  else()
+    add_library(ace::doctest UNKNOWN IMPORTED)
+    if(EXISTS ${__LIBRARY_PREFIX}doctesti.so)
+      set_target_properties(ace::doctest PROPERTIES
+        IMPORTED_LOCATION_DEBUG "${__LIBRARY_PREFIX}doctestd.so"
+        IMPORTED_LOCATION_RELEASE "${__LIBRARY_PREFIX}doctestr.so"
+        IMPORTED_LOCATION_MINSIZEREL "${__LIBRARY_PREFIX}doctestm.so"
+        IMPORTED_LOCATION_RELWITHDEBINFO "${__LIBRARY_PREFIX}doctesti.so"
+        IMPORTED_CONFIGURATIONS "DEBUG;RELEASE;MINSIZEREL;RELWITHDEBINFO")
+    endif()
+  endif()
 endif()
 
-foreach(port ${ACE_LIBRARIES})
+foreach(port ${__LIBRARIES})
   if(NOT TARGET ace::${port})
-    add_library(ace::${port} INTERFACE IMPORTED)
-    set_target_properties(ace::${port} PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${ACE_LIBRARY_PREFIX}${port}${ACE_LIBRARY_SUFFIX}")
+    add_library(ace::${port} UNKNOWN IMPORTED)
+    if(EXISTS ${__LIBRARY_PREFIX}${port}${__LIBRARY_SUFFIX_RELWITHDEBINFO})
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_DEBUG "${__LIBRARY_PREFIX}${port}${__LIBRARY_SUFFIX_DEBUG}"
+        IMPORTED_LOCATION_RELEASE "${__LIBRARY_PREFIX}${port}${__LIBRARY_SUFFIX_RELEASE}"
+        IMPORTED_LOCATION_MINSIZEREL "${__LIBRARY_PREFIX}${port}${__LIBRARY_SUFFIX_MINSIZEREL}"
+        IMPORTED_LOCATION_RELWITHDEBINFO "${__LIBRARY_PREFIX}${port}${__LIBRARY_SUFFIX_RELWITHDEBINFO}"
+        IMPORTED_CONFIGURATIONS "DEBUG;RELEASE;MINSIZEREL;RELWITHDEBINFO")
+    endif()
   endif()
 endforeach()
 
@@ -219,6 +209,11 @@ set_property(TARGET ace::webp APPEND PROPERTY
 
 set_property(TARGET ace::tiff APPEND PROPERTY
   INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::webp;ace::lzma;ace::zlib;ace::zstd")
+
+# Cleanup
+unset(__LIBRARY_PREFIX)
+unset(__LIBRARY_SUFFIX)
+unset(__LIBRARIES)
 
 # CMake
 set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")

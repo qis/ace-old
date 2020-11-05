@@ -18,7 +18,7 @@ foreach(source ${sources})
 endforeach()
 
 # Library
-add_library(benchmark STATIC ${headers} ${sources})
+add_library(benchmark ${headers} ${sources})
 target_include_directories(benchmark PRIVATE src/include)
 
 if(WIN32)
@@ -31,22 +31,15 @@ else()
   target_compile_options(benchmark PRIVATE -Wno-stringop-truncation)
 endif()
 
-if(MSVC AND BUILD_SHARED_LIBS)
-  set_target_properties(benchmark PROPERTIES
-    COMPILE_PDB_NAME_DEBUG benchmarkd
-    COMPILE_PDB_NAME_RELEASE benchmarkr
-    COMPILE_PDB_NAME_MINSIZEREL benchmarkm
-    COMPILE_PDB_NAME_RELWITHDEBINFO benchmarki
-    COMPILE_PDB_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
+if(WIN32 AND BUILD_SHARED_LIBS)
+  set_target_properties(benchmark PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 endif()
 
 # Install
 install(TARGETS benchmark)
 
 if(WIN32 AND BUILD_SHARED_LIBS)
-  install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/$<TARGET_FILE_BASE_NAME:benchmark>.pdb
-    DESTINATION lib)
+  install(FILES $<TARGET_PDB_FILE:benchmark> DESTINATION bin)
 endif()
 
 if(NOT SKIP_INSTALL_HEADERS)
