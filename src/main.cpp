@@ -8,7 +8,7 @@ auto switch_to_new_thread(std::thread& thread)
   struct awaitable {
     std::thread* thread_;
 
-    bool await_ready()
+    constexpr bool await_ready() noexcept
     {
       return false;
     }
@@ -17,17 +17,17 @@ auto switch_to_new_thread(std::thread& thread)
     {
       auto& thread = *thread_;
       if (thread.joinable()) {
-        throw std::runtime_error("output jthread parameter not empty");
+        throw std::runtime_error("output thread not stopped");
       }
-
       thread = std::thread([handle] {
         handle.resume();
       });
-
-      fmt::print("coro: {}\n", thread.get_id());
     }
 
-    void await_resume() {}
+    constexpr int await_resume() noexcept
+    {
+      return 3;
+    }
   };
 
   return awaitable{ &thread };
@@ -40,25 +40,28 @@ struct task {
       return {};
     }
 
-    constexpr auto initial_suspend() noexcept
+    constexpr std::suspend_never initial_suspend() noexcept
     {
-      return std::suspend_never{};
+      return {};
     }
 
-    constexpr auto final_suspend() noexcept
+    constexpr std::suspend_never final_suspend() noexcept
     {
-      return std::suspend_never{};
+      return {};
     }
 
-    constexpr void return_void() noexcept {}
-    constexpr void unhandled_exception() noexcept {}
+    constexpr void return_void() noexcept
+    {}
+
+    constexpr void unhandled_exception() noexcept
+    {}
   };
 };
 
 task resuming_on_new_thread(std::thread& out) noexcept
 {
   fmt::print("0001: {}\n", std::this_thread::get_id());
-  co_await switch_to_new_thread(out);
+  const auto value = co_await switch_to_new_thread(out);
   fmt::print("0002: {}\n", std::this_thread::get_id());
 }
 
