@@ -124,75 +124,72 @@ endif()
 # Include Directories
 include_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/include)
 
-# CMake
-set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")
-mark_as_advanced(IGNORE_TOOLCHAIN_FILE_VARIABLE)
-
-# Ports
-set(__PORTS_LIBRARIES)
-
-# Utility
-list(APPEND __PORTS_LIBRARIES fmt tz pugixml tbb)
-
-# Compression
-list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
-
-# Image Processing
-list(APPEND __PORTS_LIBRARIES jpeg png webp tiff)
-
-# Import
+# Library Prefix
 if(WIN32)
-  set(__PORTS_LIBRARY_PREFIX "")
-  link_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/lib)
+  set(ACE_LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/")
 else()
-  set(__PORTS_LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}")
+  set(ACE_LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}")
 endif()
+mark_as_advanced(ACE_LIBRARY_PREFIX)
+
+# Library Suffix
+if(WIN32)
+  set(ACE_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.lib>")
+  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.lib>")
+  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.lib>")
+  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.lib>")
+else()
+  set(ACE_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.so>")
+  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.a>")
+  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
+  string(APPEND ACE_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
+endif()
+mark_as_advanced(ACE_LIBRARY_SUFFIX)
 
 if(WIN32)
-  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.lib>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.lib>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.lib>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.lib>")
+  set(ACE_BENCHMARK_SUFFIX ${ACE_LIBRARY_SUFFIX})
+else()
+  set(ACE_BENCHMARK_SUFFIX "$<$<CONFIG:Debug>:d.a>")
+  string(APPEND ACE_BENCHMARK_SUFFIX "$<$<CONFIG:Release>:r.a>")
+  string(APPEND ACE_BENCHMARK_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
+  string(APPEND ACE_BENCHMARK_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.a>")
 endif()
+mark_as_advanced(ACE_BENCHMARK_SUFFIX)
 
-if(UNIX)
-  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.a>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.a>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.a>")
+if(WIN32)
+  set(ACE_DOCTEST_SUFFIX ${ACE_LIBRARY_SUFFIX})
+else()
+  set(ACE_DOCTEST_SUFFIX "$<$<CONFIG:Debug>:d.so>")
+  string(APPEND ACE_DOCTEST_SUFFIX "$<$<CONFIG:Release>:r.so>")
+  string(APPEND ACE_DOCTEST_SUFFIX "$<$<CONFIG:MinSizeRel>:m.so>")
+  string(APPEND ACE_DOCTEST_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
 endif()
+mark_as_advanced(ACE_DOCTEST_SUFFIX)
+
+# Libraries
+set(ACE_LIBRARIES)
+list(APPEND ACE_LIBRARIES fmt tz pugixml tbb)
+list(APPEND ACE_LIBRARIES brotli bzip2 lzma zlib zstd)
+list(APPEND ACE_LIBRARIES jpeg png webp tiff)
+mark_as_advanced(ACE_LIBRARIES)
 
 if(NOT TARGET ace::benchmark)
   add_library(ace::benchmark INTERFACE IMPORTED)
   set_target_properties(ace::benchmark PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${__PORTS_LIBRARY_PREFIX}benchmark${__PORTS_LIBRARY_SUFFIX}")
-endif()
-
-if(UNIX)
-  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.so>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.so>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.so>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
+    INTERFACE_LINK_LIBRARIES "${ACE_LIBRARY_PREFIX}benchmark${ACE_BENCHMARK_SUFFIX}")
 endif()
 
 if(NOT TARGET ace::doctest)
   add_library(ace::doctest INTERFACE IMPORTED)
   set_target_properties(ace::doctest PROPERTIES
-    INTERFACE_LINK_LIBRARIES "${__PORTS_LIBRARY_PREFIX}doctest${__PORTS_LIBRARY_SUFFIX}")
+    INTERFACE_LINK_LIBRARIES "${ACE_LIBRARY_PREFIX}doctest${ACE_DOCTEST_SUFFIX}")
 endif()
 
-if(UNIX)
-  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.so>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.a>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
-  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
-endif()
-
-foreach(port ${__PORTS_LIBRARIES})
+foreach(port ${ACE_LIBRARIES})
   if(NOT TARGET ace::${port})
     add_library(ace::${port} INTERFACE IMPORTED)
     set_target_properties(ace::${port} PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${__PORTS_LIBRARY_PREFIX}${port}${__PORTS_LIBRARY_SUFFIX}")
+      INTERFACE_LINK_LIBRARIES "${ACE_LIBRARY_PREFIX}${port}${ACE_LIBRARY_SUFFIX}")
   endif()
 endforeach()
 
@@ -223,7 +220,6 @@ set_property(TARGET ace::webp APPEND PROPERTY
 set_property(TARGET ace::tiff APPEND PROPERTY
   INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::webp;ace::lzma;ace::zlib;ace::zstd")
 
-# Cleanup
-unset(__PORTS_LIBRARY_SUFFIX)
-unset(__PORTS_LIBRARY_PREFIX)
-unset(__PORTS_LIBRARIES)
+# CMake
+set(IGNORE_TOOLCHAIN_FILE_VARIABLE "${CMAKE_TOOLCHAIN_FILE}")
+mark_as_advanced(IGNORE_TOOLCHAIN_FILE_VARIABLE)
