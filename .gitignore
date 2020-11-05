@@ -13,5 +13,4 @@
 !/make.cmd
 !/makefile
 !/readme.md
-!/run.cmake
 !/toolchain.cmake
