@@ -25,8 +25,7 @@ target_link_libraries(tests PRIVATE
   # Image Formats
   ace::jpeg
   ace::png
-  ace::webp
-  ace::tiff)
+  ace::webp)
 
 # Benchmarks
 add_executable(benchmarks EXCLUDE_FROM_ALL src/benchmark.cpp src/main.manifest)

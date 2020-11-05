@@ -3,7 +3,12 @@ PREFIX = /opt/ace
 
 # Build
 all: configure
-	@ninja -v -C build/$(SYSTEM) -f build-Release.ninja tests
+	@ninja -C build/$(SYSTEM) -f build-Debug.ninja main benchmark tests
+
+time: configure
+	@cmake -E echo "Release"
+	@bash -c 'time ninja -C build/$(SYSTEM) -f build-Release.ninja tests'
+	@cmake -E echo ""
 
 none:
 	@ninja -C build/$(SYSTEM) -f build-Debug.ninja
@@ -23,7 +28,7 @@ configure: build/$(SYSTEM)/build.ninja
 
 # Run
 run: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja main
+	@ninja -v -C build/$(SYSTEM) -f build-Debug.ninja main
 	@cmake -E chdir build/$(SYSTEM)/Debug ./main
 
 # Test
@@ -39,10 +44,14 @@ test: configure
 
 # Benchmark
 benchmark: configure
+	@ninja -C build/$(SYSTEM) -f build-Debug.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM)/Debug ./benchmarks
 	@ninja -C build/$(SYSTEM) -f build-Release.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/Release ./benchmarks
 	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./benchmarks
+	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM)/RelWithDebInfo ./benchmarks
 
 # Format
 format:
