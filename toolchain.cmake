@@ -131,9 +131,6 @@ mark_as_advanced(IGNORE_TOOLCHAIN_FILE_VARIABLE)
 # Ports
 set(__PORTS_LIBRARIES)
 
-# Development
-list(APPEND __PORTS_LIBRARIES benchmark doctest)
-
 # Utility
 list(APPEND __PORTS_LIBRARIES fmt tz pugixml tbb)
 
@@ -143,55 +140,59 @@ list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
 # Image Processing
 list(APPEND __PORTS_LIBRARIES jpeg png webp tiff)
 
-# Suffix
-set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d>")
-string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r>")
-string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m>")
-string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i>")
-
+# Import
 if(WIN32)
-  string(APPEND __PORTS_LIBRARY_SUFFIX ".lib")
+  set(__PORTS_LIBRARY_PREFIX "")
+  link_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/lib)
+else()
+  set(__PORTS_LIBRARY_PREFIX "${CMAKE_CURRENT_LIST_DIR}/lib/${CMAKE_SHARED_LIBRARY_PREFIX}")
 endif()
 
-# Import
+if(WIN32)
+  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.lib>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.lib>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.lib>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.lib>")
+endif()
+
+if(UNIX)
+  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.a>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.a>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.a>")
+endif()
+
+if(NOT TARGET ace::benchmark)
+  add_library(ace::benchmark INTERFACE IMPORTED)
+  set_target_properties(ace::benchmark PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${__PORTS_LIBRARY_PREFIX}benchmark${__PORTS_LIBRARY_SUFFIX}")
+endif()
+
+if(UNIX)
+  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.so>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.so>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.so>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
+endif()
+
+if(NOT TARGET ace::doctest)
+  add_library(ace::doctest INTERFACE IMPORTED)
+  set_target_properties(ace::doctest PROPERTIES
+    INTERFACE_LINK_LIBRARIES "${__PORTS_LIBRARY_PREFIX}doctest${__PORTS_LIBRARY_SUFFIX}")
+endif()
+
+if(UNIX)
+  set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d.so>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Release>:r.a>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:MinSizeRel>:m.a>")
+  string(APPEND __PORTS_LIBRARY_SUFFIX "$<$<CONFIG:RelWithDebInfo>:i.so>")
+endif()
+
 foreach(port ${__PORTS_LIBRARIES})
   if(NOT TARGET ace::${port})
-    add_library(ace::${port} UNKNOWN IMPORTED)
-
+    add_library(ace::${port} INTERFACE IMPORTED)
     set_target_properties(ace::${port} PROPERTIES
-      IMPORTED_LINK_INTERFACE_LANGUAGES "CXX")
-
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.so")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_DEBUG "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.so")
-    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.a")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_DEBUG "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.a")
-    endif()
-
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.so")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_RELEASE "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.so")
-    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.a")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_RELEASE "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.a")
-    endif()
-
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.so")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_MINSIZEREL "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.so")
-    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.a")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_MINSIZEREL "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.a")
-    endif()
-
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.so")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.so")
-    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.a")
-      set_target_properties(ace::${port} PROPERTIES
-        IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.a")
-    endif()
+      INTERFACE_LINK_LIBRARIES "${__PORTS_LIBRARY_PREFIX}${port}${__PORTS_LIBRARY_SUFFIX}")
   endif()
 endforeach()
 
@@ -224,4 +225,5 @@ set_property(TARGET ace::tiff APPEND PROPERTY
 
 # Cleanup
 unset(__PORTS_LIBRARY_SUFFIX)
+unset(__PORTS_LIBRARY_PREFIX)
 unset(__PORTS_LIBRARIES)
