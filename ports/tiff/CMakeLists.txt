@@ -248,7 +248,7 @@ endif()
 if(MSVC)
   target_compile_options(tiff PRIVATE /wd4005 /wd4244 /wd4996 /wd5105)
 else()
-  target_compile_options(tiff PRIVATE -Wno-format)
+  target_compile_options(tiff PRIVATE -Wno-format -Wno-unused-but-set-variable)
 endif()
 
 # Install

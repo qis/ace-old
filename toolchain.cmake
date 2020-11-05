@@ -70,9 +70,6 @@ if(WIN32)
   set(CMAKE_RC_FLAGS_MINSIZEREL_INIT "/DNDEBUG")
   set(CMAKE_RC_FLAGS_RELWITHDEBINFO_INIT "/DNDEBUG")
 
-  # Link Directories
-  link_directories(BEFORE ${CMAKE_CURRENT_LIST_DIR}/lib)
-
   # Cleanup
   unset(MSVC_DEFINES)
   unset(MSVC_FLAGS)
@@ -104,7 +101,7 @@ else()
 
   # Linker Flags
   foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
-    set(CMAKE_${LINKER}_FLAGS "-L${CMAKE_CURRENT_LIST_DIR}/lib" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS "" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_DEBUG "" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -Wl,--as-needed -flto" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_MINSIZEREL "-Wl,-s -Wl,--as-needed -flto" CACHE STRING "")
@@ -134,8 +131,11 @@ mark_as_advanced(IGNORE_TOOLCHAIN_FILE_VARIABLE)
 # Ports
 set(__PORTS_LIBRARIES)
 
+# Development
+list(APPEND __PORTS_LIBRARIES benchmark doctest)
+
 # Utility
-list(APPEND __PORTS_LIBRARIES benchmark doctest fmt tz pugixml tbb)
+list(APPEND __PORTS_LIBRARIES fmt tz pugixml tbb)
 
 # Compression
 list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
@@ -156,9 +156,42 @@ endif()
 # Import
 foreach(port ${__PORTS_LIBRARIES})
   if(NOT TARGET ace::${port})
-    add_library(ace::${port} INTERFACE IMPORTED)
+    add_library(ace::${port} UNKNOWN IMPORTED)
+
     set_target_properties(ace::${port} PROPERTIES
-      INTERFACE_LINK_LIBRARIES "${port}${__PORTS_LIBRARY_SUFFIX}")
+      IMPORTED_LINK_INTERFACE_LANGUAGES "CXX")
+
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.so")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_DEBUG "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.so")
+    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.a")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_DEBUG "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}d.a")
+    endif()
+
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.so")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_RELEASE "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.so")
+    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.a")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_RELEASE "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}r.a")
+    endif()
+
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.so")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_MINSIZEREL "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.so")
+    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.a")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_MINSIZEREL "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}m.a")
+    endif()
+
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.so")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.so")
+    elseif(EXISTS "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.a")
+      set_target_properties(ace::${port} PROPERTIES
+        IMPORTED_LOCATION_RELWITHDEBINFO "${CMAKE_CURRENT_LIST_DIR}/lib/lib${port}i.a")
+    endif()
   endif()
 endforeach()
 
@@ -187,7 +220,7 @@ set_property(TARGET ace::webp APPEND PROPERTY
   INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::png")
 
 set_property(TARGET ace::tiff APPEND PROPERTY
-  INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::webp;ace::lzma;ace::zstd;ace::zlib")
+  INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::webp;ace::lzma;ace::zlib;ace::zstd")
 
 # Cleanup
 unset(__PORTS_LIBRARY_SUFFIX)
