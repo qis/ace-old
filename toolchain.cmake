@@ -86,6 +86,7 @@ else()
 
   # Warning Flags
   set(WARN_FLAGS "-Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-variable")
+  set(WARN_FLAGS "${WARN_FLAGS} -fdiagnostics-color=always")
 
   # Compiler Flags
   set(CMAKE_C_FLAGS "-mavx2 -fasm ${WARN_FLAGS} -pthread -D_DEFAULT_SOURCE=1" CACHE STRING "")
@@ -120,6 +121,11 @@ else()
 
   # Cleanup
   unset(WARN_FLAGS)
+
+  if(VSCODE)
+    set(VSCODE_INCLUDE "-include ${CMAKE_CURRENT_LIST_DIR}/ports/coroutine.hpp")
+    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fcoroutines ${VSCODE_INCLUDE}" CACHE STRING "" FORCE)
+  endif()
 endif()
 
 # Include Directories
