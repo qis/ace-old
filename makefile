@@ -3,18 +3,10 @@ PREFIX = /opt/ace
 
 # Build
 all: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja main benchmark tests
-
-time: configure
-	@cmake -E echo "Release"
-	@bash -c 'time ninja -C build/$(SYSTEM) -f build-Release.ninja tests'
-	@cmake -E echo ""
-
-none:
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja
-	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja
-	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Debug.ninja main tests benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja main tests benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-MinSizeRel.ninja main tests benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-RelWithDebInfo.ninja main tests benchmarks
 
 # Configure
 build/$(SYSTEM)/build.ninja: CMakeLists.txt
@@ -28,29 +20,29 @@ configure: build/$(SYSTEM)/build.ninja
 
 # Run
 run: configure
-	@ninja -v -C build/$(SYSTEM) -f build-Debug.ninja main
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Debug.ninja main
 	@cmake -E chdir build/$(SYSTEM)/Debug ./main
 
 # Test
 test: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Debug.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/Debug ./tests
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/Release ./tests
-	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-MinSizeRel.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./tests
-	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja tests
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-RelWithDebInfo.ninja tests
 	@cmake -E chdir build/$(SYSTEM)/RelWithDebInfo ./tests
 
 # Benchmark
 benchmark: configure
-	@ninja -C build/$(SYSTEM) -f build-Debug.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Debug.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/Debug ./benchmarks
-	@ninja -C build/$(SYSTEM) -f build-Release.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-Release.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/Release ./benchmarks
-	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-MinSizeRel.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/MinSizeRel ./benchmarks
-	@ninja -C build/$(SYSTEM) -f build-RelWithDebInfo.ninja benchmarks
+	@cmake -E chdir build/$(SYSTEM) ninja -f build-RelWithDebInfo.ninja benchmarks
 	@cmake -E chdir build/$(SYSTEM)/RelWithDebInfo ./benchmarks
 
 # Format
