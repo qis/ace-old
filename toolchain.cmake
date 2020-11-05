@@ -141,7 +141,7 @@ list(APPEND __PORTS_LIBRARIES benchmark doctest fmt tz pugixml tbb)
 list(APPEND __PORTS_LIBRARIES brotli bzip2 lzma zlib zstd)
 
 # Image Processing
-list(APPEND __PORTS_LIBRARIES jpeg png webp)
+list(APPEND __PORTS_LIBRARIES jpeg png webp tiff)
 
 # Suffix
 set(__PORTS_LIBRARY_SUFFIX "$<$<CONFIG:Debug>:d>")
@@ -185,6 +185,9 @@ set_property(TARGET ace::png APPEND PROPERTY
 
 set_property(TARGET ace::webp APPEND PROPERTY
   INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::png")
+
+set_property(TARGET ace::tiff APPEND PROPERTY
+  INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::webp;ace::lzma;ace::zstd;ace::zlib")
 
 # Cleanup
 unset(__PORTS_LIBRARY_SUFFIX)
