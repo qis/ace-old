@@ -1,7 +1,9 @@
 #include "doctest/doctest.h"
+#include <array>
 #include <string_view>
 #include <vector>
 #include <cassert>
+#include <cstdint>
 
 #include <fmt/format.h>
 TEST_CASE("fmt")
@@ -98,6 +100,81 @@ TEST_CASE("zstd")
   REQUIRE(major == 1);
   REQUIRE(minor == 4);
   REQUIRE(patch == 5);
+}
+
+#include <jpeglib.h>
+#include <turbojpeg.h>
+TEST_CASE("jpeg")
+{
+  std::uint32_t version = LIBJPEG_TURBO_VERSION_NUMBER;
+  const auto major = version / 1000000;
+  const auto minor = (version - major * 1000000) / 1000;
+  const auto patch = version - major * 1000000 - minor * 1000;
+  REQUIRE(major == 2);
+  REQUIRE(minor == 0);
+  REQUIRE(patch == 5);
+
+  jpeg_error_mgr jerr = {};
+  jpeg_compress_struct cinfo = {};
+  cinfo.err = jpeg_std_error(&jerr);
+
+  jpeg_create_compress(&cinfo);
+  REQUIRE(cinfo.mem);
+
+  jpeg_destroy_compress(&cinfo);
+  REQUIRE(!cinfo.mem);
+
+  const auto compressor = tjInitCompress();
+  REQUIRE(compressor);
+  REQUIRE(tjDestroy(compressor) == 0);
+}
+
+#include <png.h>
+TEST_CASE("png")
+{
+  const auto vs = png_libpng_ver;
+  REQUIRE(vs);
+  REQUIRE(std::string_view{ vs } == "1.6.37");
+}
+
+#include <webp/decode.h>
+#include <webp/demux.h>
+#include <webp/encode.h>
+#include <webp/mux.h>
+TEST_CASE("webp")
+{
+  std::array<std::uint32_t, 4> versions = {
+    static_cast<std::uint32_t>(WebPGetDecoderVersion()),
+    static_cast<std::uint32_t>(WebPGetEncoderVersion()),
+    static_cast<std::uint32_t>(WebPGetDemuxVersion()),
+    static_cast<std::uint32_t>(WebPGetMuxVersion()),
+  };
+  for (const auto v : versions) {
+    const auto major = v >> 16 & 0xFF;
+    const auto minor = v >> 8 & 0xFF;
+    const auto patch = v & 0xFF;
+    REQUIRE(major == 1);
+    REQUIRE(minor == 1);
+    REQUIRE(patch == 0);
+  }
+}
+
+#include <tiffio.hxx>
+TEST_CASE("tiff")
+{
+  // clang-format off
+  std::array<char, 72> buffer = {
+    0x49, 0x49, 0x2A, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x05, 0x00, 0x00, 0x01, 0x03, 0x00,
+    0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x01, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00,
+    0x01, 0x00, 0x00, 0x00, 0x03, 0x01, 0x03, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+    0x11, 0x01, 0x04, 0x00, 0x01, 0x00, 0x00, 0x00, 0x08, 0x00, 0x00, 0x00, 0x17, 0x01, 0x04, 0x00,
+    0x01, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
+  };
+  // clang-format on
+  std::istringstream is{ std::string{ buffer.data(), buffer.size() } };
+  const auto tif = TIFFStreamOpen("buffer.tiff", &is);
+  REQUIRE(true);
+  TIFFClose(tif);
 }
 
 int main(int argc, char* argv[])

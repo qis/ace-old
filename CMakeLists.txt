@@ -20,7 +20,13 @@ target_link_libraries(tests PRIVATE
   ace::bzip2
   ace::lzma
   ace::zlib
-  ace::zstd)
+  ace::zstd
+
+  # Image Formats
+  ace::jpeg
+  ace::png
+  ace::webp
+  ace::tiff)
 
 # Benchmarks
 add_executable(benchmarks EXCLUDE_FROM_ALL src/benchmark.cpp src/main.manifest)

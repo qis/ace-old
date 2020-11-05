@@ -3,6 +3,9 @@ PREFIX = /opt/ace
 
 # Build
 all: configure
+	@ninja -v -C build/$(SYSTEM) -f build-Release.ninja tests
+
+none:
 	@ninja -C build/$(SYSTEM) -f build-Debug.ninja
 	@ninja -C build/$(SYSTEM) -f build-Release.ninja
 	@ninja -C build/$(SYSTEM) -f build-MinSizeRel.ninja
