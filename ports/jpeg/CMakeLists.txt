@@ -263,7 +263,10 @@ endif()
 if(MSVC)
   target_compile_options(jpeg PRIVATE $<$<COMPILE_LANGUAGE:C>:/wd4996>)
 else()
-  target_compile_options(jpeg PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-sign-compare -Wno-clobbered>)
+  target_compile_options(jpeg PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-sign-compare>)
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(jpeg PRIVATE $<$<COMPILE_LANGUAGE:C>:-Wno-clobbered>)
+  endif()
 endif()
 
 # Install

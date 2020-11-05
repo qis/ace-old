@@ -136,7 +136,10 @@ endif()
 if(MSVC)
   target_compile_options(webp PRIVATE /wd5105)
 else()
-  target_compile_options(webp PRIVATE -Wno-pedantic -Wno-maybe-uninitialized)
+  target_compile_options(webp PRIVATE -Wno-pedantic)
+  if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(webp PRIVATE -Wno-maybe-uninitialized)
+  endif()
 endif()
 
 # Install

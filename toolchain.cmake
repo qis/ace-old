@@ -84,10 +84,8 @@ else()
   set(CMAKE_AR "gcc-ar-10" CACHE STRING "")
   set(CMAKE_NM "gcc-nm-10" CACHE STRING "")
 
-  # WARN Flags
-  set(WARN_FLAGS "-Wall -Wextra -Wpedantic")
-  set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-parameter")
-  set(WARN_FLAGS "${WARN_FLAGS} -Wno-unused-variable")
+  # Warning Flags
+  set(WARN_FLAGS "-Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-variable")
 
   # Compiler Flags
   set(CMAKE_C_FLAGS "-mavx2 -fasm ${WARN_FLAGS} -pthread -D_DEFAULT_SOURCE=1" CACHE STRING "")
@@ -96,18 +94,18 @@ else()
   set(CMAKE_C_FLAGS_MINSIZEREL "-Os -flto -DNDEBUG" CACHE STRING "")
   set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g -DACE_SHARED -DNDEBUG" CACHE STRING "")
 
-  set(CMAKE_CXX_FLAGS "-fcoroutines ${CMAKE_C_FLAGS}" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fcoroutines" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" CACHE STRING "")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -static-libstdc++" CACHE STRING "")
-  set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL} -static-libstdc++" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO}" CACHE STRING "")
 
   # Linker Flags
   foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
     set(CMAKE_${LINKER}_FLAGS "" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_DEBUG "" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -Wl,--as-needed -flto" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_MINSIZEREL "-Wl,-s -Wl,--as-needed -flto" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -Wl,--as-needed -static-libstdc++" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_MINSIZEREL "-Wl,-s -Wl,--as-needed -static-libstdc++" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_RELWITHDEBINFO "" CACHE STRING "")
   endforeach()
 
@@ -151,7 +149,7 @@ endif()
 set(__LIBRARIES)
 list(APPEND __LIBRARIES benchmark fmt tz pugixml tbb)
 list(APPEND __LIBRARIES brotli bzip2 lzma zlib zstd)
-list(APPEND __LIBRARIES jpeg png webp tiff)
+list(APPEND __LIBRARIES jpeg png webp)
 
 if(NOT TARGET ace::doctest)
   if(WIN32)
@@ -206,9 +204,6 @@ set_property(TARGET ace::png APPEND PROPERTY
 
 set_property(TARGET ace::webp APPEND PROPERTY
   INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::png")
-
-set_property(TARGET ace::tiff APPEND PROPERTY
-  INTERFACE_LINK_LIBRARIES "ace::jpeg;ace::webp;ace::lzma;ace::zlib;ace::zstd")
 
 # Cleanup
 unset(__LIBRARY_PREFIX)

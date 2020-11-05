@@ -5,7 +5,7 @@ all: \
   benchmark doctest \
   date fmt pugixml tbb \
   brotli bzip2 lzma zlib zstd \
-  jpeg png webp tiff
+  jpeg png webp
 
 benchmark:
 	@$(MAKE) $(MFLAGS) install/target TARGET=benchmark
@@ -48,9 +48,6 @@ png:
 
 webp:
 	@$(MAKE) $(MFLAGS) install/target TARGET=webp
-
-tiff:
-	@$(MAKE) $(MFLAGS) install/target TARGET=tiff
 
 configure/target: \
   build/$(TARGET)/debug/rules.ninja \
@@ -121,7 +118,6 @@ delete: reset
 	@cmake -E remove_directory ports/png/src
 	@cmake -E remove_directory ports/pugixml/src
 	@cmake -E remove_directory ports/tbb/src
-	@cmake -E remove_directory ports/tiff/src
 	@cmake -E remove_directory ports/webp/src
 	@cmake -E remove_directory ports/zlib/src
 	@cmake -E remove_directory ports/zstd/src

@@ -27,7 +27,7 @@ endif()
 
 if(MSVC)
   target_compile_options(benchmark PRIVATE /wd4722)
-else()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
   target_compile_options(benchmark PRIVATE -Wno-stringop-truncation)
 endif()
 
