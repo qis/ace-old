@@ -18,28 +18,28 @@ if(WIN32)
   set(CMAKE_LINKER "link.exe" CACHE STRING "")
   set(CMAKE_AR "lib.exe" CACHE STRING "")
 
-  # Runtime Library
-  set(CMAKE_MSVC_RUNTIME_LIBRARY
-    "MultiThreaded$<$<CONFIG:RelWithDebInfo>:DLL>$<$<CONFIG:Debug>:DebugDLL>" CACHE STRING "")
+  # Runtime
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:RelWithDebInfo>:DLL>")
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "${CMAKE_MSVC_RUNTIME_LIBRARY}$<$<CONFIG:Debug>:DebugDLL>")
+  set(CMAKE_MSVC_RUNTIME_LIBRARY "${CMAKE_MSVC_RUNTIME_LIBRARY}" CACHE STRING "")
 
-  # MSVC Defines
-  set(MSVC_DEFINES "/DWIN32 /D_WINDOWS /DWINVER=0x0A00 /D_WIN32_WINNT=0x0A00")
-  set(MSVC_DEFINES "${MSVC_DEFINES} /DNOMINMAX /DWIN32_LEAN_AND_MEAN")
-  set(MSVC_DEFINES "${MSVC_DEFINES} /D_CRT_SECURE_NO_WARNINGS")
-
-  # MSVC Flags
-  set(MSVC_FLAGS "/W3 /wd4101 /wd4275 /wd26812 /wd28251")
-  set(MSVC_FLAGS "${MSVC_FLAGS} /diagnostics:column /FC")
-  set(MSVC_FLAGS "${MSVC_FLAGS} ${MSVC_DEFINES} /utf-8")
+  # Base Flags
+  set(BASE_FLAGS "/permissive- /diagnostics:column /FC /W3")
+  set(BASE_FLAGS "${BASE_FLAGS} /wd4101 /wd4275 /wd26812 /wd28251")
+  set(BASE_FLAGS "${BASE_FLAGS} /DWINVER=0x0A00 /D_WIN32_WINNT=0x0A00")
+  set(BASE_FLAGS "${BASE_FLAGS} /DWIN32 /D_WINDOWS /DNOMINMAX /DWIN32_LEAN_AND_MEAN")
+  set(BASE_FLAGS "${BASE_FLAGS} /D_ATL_SECURE_NO_DEPRECATE /D_SCL_SECURE_NO_WARNINGS")
+  set(BASE_FLAGS "${BASE_FLAGS} /D_CRT_SECURE_NO_DEPRECATE /D_CRT_SECURE_NO_WARNINGS")
+  set(BASE_FLAGS "${BASE_FLAGS} /D_CRT_NONSTDC_NO_DEPRECATE")
 
   # Compiler Flags
-  set(CMAKE_C_FLAGS "/arch:AVX2 /permissive- /Zc:__cplusplus ${MSVC_FLAGS}" CACHE STRING "")
+  set(CMAKE_C_FLAGS "/arch:AVX2 ${BASE_FLAGS} /utf-8" CACHE STRING "")
   set(CMAKE_C_FLAGS_DEBUG "/Od /sdl /RTC1 /ZI /JMC /DACE_SHARED" CACHE STRING "")
   set(CMAKE_C_FLAGS_RELEASE "/O2 /Oi /GS- /GL /analyze- /DNDEBUG" CACHE STRING "")
   set(CMAKE_C_FLAGS_MINSIZEREL "/O1 /Oi /GS- /GL /analyze- /DNDEBUG" CACHE STRING "")
-  set(CMAKE_C_FLAGS_RELWITHDEBINFO "/O1 /Oi /GS- /ZI /JMC /DACE_SHARED /DNDEBUG" CACHE STRING "")
+  set(CMAKE_C_FLAGS_RELWITHDEBINFO "/O1 /Oi /GS- /ZI /JMC /DNDEBUG /DACE_SHARED" CACHE STRING "")
 
-  set(CMAKE_CXX_FLAGS "/EHsc ${CMAKE_C_FLAGS}" CACHE STRING "")
+  set(CMAKE_CXX_FLAGS "/EHsc ${CMAKE_C_FLAGS} /Zc:__cplusplus" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_MINSIZEREL "${CMAKE_C_FLAGS_MINSIZEREL}" CACHE STRING "")
@@ -57,12 +57,6 @@ if(WIN32)
   # Disable logo for compiler and linker.
   set(CMAKE_CL_NOLOGO "/nologo" CACHE STRING "")
 
-  # Standard Libraries
-  set(CMAKE_C_STANDARD_LIBRARIES
-    "kernel32.lib user32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib" CACHE STRING "")
-  set(CMAKE_CXX_STANDARD_LIBRARIES
-    "${CMAKE_C_STANDARD_LIBRARIES}" CACHE STRING "")
-
   # Assembler Flags
   set(CMAKE_ASM_MASM_FLAGS_INIT "/nologo")
 
@@ -74,8 +68,7 @@ if(WIN32)
   set(CMAKE_RC_FLAGS_RELWITHDEBINFO_INIT "/DNDEBUG")
 
   # Cleanup
-  unset(MSVC_DEFINES)
-  unset(MSVC_FLAGS)
+  unset(BASE_FLAGS)
 else()
   # Toolset
   set(CMAKE_C_COMPILER "gcc-10" CACHE STRING "")
@@ -84,16 +77,16 @@ else()
   set(CMAKE_AR "gcc-ar-10" CACHE STRING "")
   set(CMAKE_NM "gcc-nm-10" CACHE STRING "")
 
-  # Warning Flags
-  set(WARN_FLAGS "-Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-variable")
-  set(WARN_FLAGS "${WARN_FLAGS} -fdiagnostics-color=always")
+  # Base Flags
+  set(BASE_FLAGS "-Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-unused-variable")
+  set(BASE_FLAGS "${BASE_FLAGS} -fdiagnostics-color=always -D_DEFAULT_SOURCE=1")
 
   # Compiler Flags
-  set(CMAKE_C_FLAGS "-mavx2 -fasm ${WARN_FLAGS} -pthread -D_DEFAULT_SOURCE=1" CACHE STRING "")
+  set(CMAKE_C_FLAGS "-mavx2 -fasm ${BASE_FLAGS} -pthread" CACHE STRING "")
   set(CMAKE_C_FLAGS_DEBUG "-O0 -g -DACE_SHARED" CACHE STRING "")
   set(CMAKE_C_FLAGS_RELEASE "-O3 -flto -DNDEBUG" CACHE STRING "")
   set(CMAKE_C_FLAGS_MINSIZEREL "-Os -flto -DNDEBUG" CACHE STRING "")
-  set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g -DACE_SHARED -DNDEBUG" CACHE STRING "")
+  set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O2 -g -DNDEBUG -DACE_SHARED" CACHE STRING "")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -fcoroutines" CACHE STRING "")
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG}" CACHE STRING "")
@@ -103,10 +96,10 @@ else()
 
   # Linker Flags
   foreach(LINKER SHARED_LINKER MODULE_LINKER EXE_LINKER)
-    set(CMAKE_${LINKER}_FLAGS "" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS "-Wl,--as-needed" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_DEBUG "" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -Wl,--as-needed -static-libstdc++" CACHE STRING "")
-    set(CMAKE_${LINKER}_FLAGS_MINSIZEREL "-Wl,-s -Wl,--as-needed -static-libstdc++" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_RELEASE "-Wl,-s -static-libstdc++" CACHE STRING "")
+    set(CMAKE_${LINKER}_FLAGS_MINSIZEREL "-Wl,-s -static-libstdc++" CACHE STRING "")
     set(CMAKE_${LINKER}_FLAGS_RELWITHDEBINFO "" CACHE STRING "")
   endforeach()
 
@@ -120,7 +113,7 @@ else()
   endif()
 
   # Cleanup
-  unset(WARN_FLAGS)
+  unset(BASE_FLAGS)
 
   if(VSCODE)
     set(VSCODE_INCLUDE "-include ${CMAKE_CURRENT_LIST_DIR}/ports/coroutine.hpp")
