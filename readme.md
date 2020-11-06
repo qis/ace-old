@@ -48,7 +48,7 @@ Install [NASM](https://www.nasm.us/pub/nasm/releasebuilds/2.15.05/win64/nasm-2.1
 ☐ Manual
 ☐ VS8 integration
 ```
-  
+
 Install [Visual Studio Preview](https://visualstudio.microsoft.com/vs/preview/).
 
 ```
@@ -139,45 +139,29 @@ sudo chmod 0755 /etc/profile.d/node.sh
 . /etc/profile.d/node.sh
 ```
 
-Install [LLVM](https://llvm.org/).
+Set system GCC C and C++ compiler.
 
 ```sh
-sudo rm -rf /opt/llvm; sudo mkdir -p /opt/llvm
-wget https://github.com/llvm/llvm-project/releases/download/llvmorg-11.0.0/clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-sudo tar xf clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz -C /opt/llvm --strip-components=1
-rm -f clang+llvm-11.0.0-x86_64-linux-gnu-ubuntu-20.04.tar.xz
-
-sudo tee /etc/profile.d/llvm.sh >/dev/null <<'EOF'
-export PATH="/opt/llvm/bin:${PATH}"
-EOF
-
-sudo chmod 0755 /etc/profile.d/llvm.sh
-. /etc/profile.d/llvm.sh
-
-sudo tee /etc/ld.so.conf.d/llvm.conf >/dev/null <<'EOF'
-/opt/llvm/lib
-EOF
-
-sudo ldconfig
+for i in gcc; do sudo update-alternatives --remove-all $i; done
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-10 100
 ```
 
-Set system compiler.
+Set system C and C++ compiler.
 
 ```sh
-for i in c++ cc g++ gcc; do sudo update-alternatives --remove-all $i; done
-sudo update-alternatives --install /usr/bin/gcc  gcc  /usr/bin/gcc-10  100
-sudo update-alternatives --install /usr/bin/g++  g++  /usr/bin/g++-10  100
-sudo update-alternatives --install /usr/bin/cc   cc   /usr/bin/gcc     100
-sudo update-alternatives --install /usr/bin/c++  c++  /usr/bin/g++     100
+for i in c++ cc; do sudo update-alternatives --remove-all $i; done
+sudo update-alternatives --install /usr/bin/gcc cc  /usr/bin/gcc 100
+sudo update-alternatives --install /usr/bin/g++ c++ /usr/bin/g++ 100
 ```
 
 </details>
 
 Install toolchain.
 
-```cmd
+```sh
 sudo mkdir /opt/ace
-sudo chown `id -u`:`id -g` /opt/ace
+sudo chown $(id -un):$(id -gn) /opt/ace
 git clone -b develop https://github.com/qis/ace /opt/ace
 cd /opt/ace && make
 ```
@@ -185,9 +169,11 @@ cd /opt/ace && make
 ## Ports
 This toolchain includes the following third party libraries.
 
-### Utility
+### Development
 - [benchmark](https://github.com/google/benchmark/releases) 1.5.2
 - [doctest](https://github.com/onqtam/doctest/releases) 2.4.0
+
+### Utility
 - [date](https://github.com/HowardHinnant/date) 3.0.0
 - [fmt](https://github.com/fmtlib/fmt/releases) 7.1.0
 - [pugixml](https://github.com/zeux/pugixml/releases) 1.10
@@ -199,3 +185,8 @@ This toolchain includes the following third party libraries.
 - [lzma](https://tukaani.org/xz/) 5.2.5
 - [zlib](https://www.zlib.net/) 1.2.11
 - [zstd](https://github.com/facebook/zstd/releases) 1.4.5
+
+### Image Formats
+- [jpeg](https://github.com/libjpeg-turbo/libjpeg-turbo/releases) 2.0.5
+- [png](http://www.libpng.org/pub/png/libpng.html) 1.6.37
+- [webp](https://developers.google.com/speed/webp/download) 1.1.0
