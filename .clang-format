@@ -110,37 +110,33 @@ Standard: Latest
 SortIncludes: true
 IncludeBlocks: Preserve
 IncludeCategories:
-    # Relative Paths
-  - Regex: '^"'
+    # Relative Config
+  - Regex: 'config.hpp"$'
     Priority: 1
 
-    # Project Config
-  - Regex: '^<ace/config.hpp>$'
+    # Relative Path
+  - Regex: '^"'
     Priority: 2
-
-    # Project Headers
-  - Regex: '^<ace/'
-    Priority: 3
 
     # Windows Headers
   - Regex: '^<(ntifs|windows)\.h>$'
-    Priority: 4
+    Priority: 3
 
     # System Headers
   - Regex: '^<(wdf|shellapi|winsock2|ws2tcpip|mswsock)\.h>$'
-    Priority: 5
+    Priority: 4
 
     # Library Headers
   - Regex: '^<.*\.'
-    Priority: 6
+    Priority: 5
 
     # C Compatibility Headers
   - Regex: '^<c(a|c|e|f|i|l|m|s|t|u|w)'
-    Priority: 8
+    Priority: 7
 
     # C++ Standard Library Headers
   - Regex: '^<'
-    Priority: 7
+    Priority: 6
 
 # Sources: a.hpp is main include for a.cpp, a_test.cpp, etc.
 IncludeIsMainRegex: '(_test|_windows|_linux|_posix)?$'

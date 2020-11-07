@@ -5,19 +5,12 @@ project(application DESCRIPTION "Application" VERSION 0.1.0 LANGUAGES CXX)
 set(PROJECT_VENDOR "Vendor")
 configure_file(res/version.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/version.h LF)
 
-# Sources
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS src/${PROJECT_NAME}/*.[hc]pp)
-
 # Objects
-add_library(objects OBJECT ${sources})
-
-target_include_directories(objects PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
-  $<INSTALL_INTERFACE:include>)
-
-# Dependencies
+add_subdirectory(src)
 target_link_libraries(objects PUBLIC ace::fmt)
+target_include_directories(objects PUBLIC
+  ${CMAKE_CURRENT_BINARY_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 # Main
 add_executable(main src/main.cpp src/main.manifest src/main.rc)

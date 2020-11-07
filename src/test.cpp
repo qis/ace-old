@@ -1,6 +1,6 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
-#include <application/random.hpp>
+#include <application.hpp>
 
 TEST_CASE("application::random")
 {

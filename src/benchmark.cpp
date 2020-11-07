@@ -1,5 +1,5 @@
 #include "benchmark/benchmark.h"
-#include <application/random.hpp>
+#include <application.hpp>
 
 static void random(benchmark::State& state)
 {
