@@ -114,12 +114,12 @@ IncludeCategories:
   - Regex: '^"'
     Priority: 1
 
-    # Project Config
-  - Regex: '^<ace/config.hpp>$'
+    # Library Config
+  - Regex: '^<library/config.hpp>$'
     Priority: 2
 
-    # Project Headers
-  - Regex: '^<ace/'
+    # Library Headers
+  - Regex: '^<library/'
     Priority: 3
 
     # Windows Headers
