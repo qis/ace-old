@@ -114,7 +114,7 @@ IncludeCategories:
   - Regex: 'config.hpp"$'
     Priority: 1
 
-    # Relative Path
+    # Relative Paths
   - Regex: '^"'
     Priority: 2
 
