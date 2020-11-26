@@ -54,7 +54,6 @@ Install [Visual Studio Preview](https://visualstudio.microsoft.com/vs/preview/).
 ```
 Workloads
 ☑ Desktop development with C++
-☑ Linux development with C++
 ☑ Node.js development
 
 Installation Details
